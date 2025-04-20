@@ -1,3 +1,4 @@
+
 import { Icon } from '@iconify/react/dist/iconify.js';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -38,32 +39,16 @@ const usersData = [
 
 const AllUsersLayer = () => {
   const [users, setUsers] = useState(usersData);
-  const [editingBalance, setEditingBalance] = useState(null);
-  const [newBalance, setNewBalance] = useState('');
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [showUnblockModal, setShowUnblockModal] = useState(false);
   const [blockUserId, setBlockUserId] = useState(null);
   const [unblockUserId, setUnblockUserId] = useState(null);
   const [blockReason, setBlockReason] = useState('');
-
-  // Handle balance edit
-  const handleEditBalance = (userId, currentBalance) => {
-    setEditingBalance(userId);
-    setNewBalance(currentBalance.toString());
-  };
-
-  const handleSaveBalance = (userId) => {
-    setUsers((prev) =>
-      prev.map((user) =>
-        user.userId === userId
-          ? { ...user, balance: parseFloat(newBalance) || user.balance }
-          : user
-      )
-    );
-    setEditingBalance(null);
-    setNewBalance('');
-    // TODO: Call API to update balance
-  };
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editUserId, setEditUserId] = useState(null);
+  const [editAction, setEditAction] = useState('add');
+  const [editAmount, setEditAmount] = useState('');
+  const [editReason, setEditReason] = useState('');
 
   // Handle block
   const handleBlockClick = (userId) => {
@@ -101,6 +86,51 @@ const AllUsersLayer = () => {
     setShowUnblockModal(false);
     setUnblockUserId(null);
     // TODO: Call API to unblock user
+  };
+
+  // Handle edit balance modal
+  const handleEditClick = (userId) => {
+    setEditUserId(userId);
+    setShowEditModal(true);
+    setEditAction('add');
+    setEditAmount('');
+    setEditReason('');
+  };
+
+  const handleEditSubmit = () => {
+    const amount = parseFloat(editAmount);
+    if (!amount || amount <= 0) {
+      alert('Please enter a valid amount.');
+      return;
+    }
+
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.userId === editUserId
+          ? {
+              ...user,
+              balance:
+                editAction === 'add'
+                  ? user.balance + amount
+                  : user.balance - amount,
+            }
+          : user
+      )
+    );
+
+    // Log the adjustment (replace with API call)
+    console.log({
+      userId: editUserId,
+      action: editAction,
+      amount,
+      reason: editReason,
+    });
+
+    setShowEditModal(false);
+    setEditUserId(null);
+    setEditAmount('');
+    setEditReason('');
+    // TODO: Call API to update balance (e.g., POST /api/users/:userId/balance { action, amount, reason })
   };
 
   return (
@@ -198,34 +228,15 @@ const AllUsersLayer = () => {
                   </td>
                   <td>{user.mobile}</td>
                   <td>
-                    {editingBalance === user.userId ? (
-                      <div className="d-flex align-items-center gap-2">
-                        <input
-                          type="number"
-                          className="form-control form-control-sm w-auto"
-                          value={newBalance}
-                          onChange={(e) => setNewBalance(e.target.value)}
-                        />
-                        <button
-                          className="btn btn-sm btn-success-600"
-                          onClick={() => handleSaveBalance(user.userId)}
-                        >
-                          <Icon icon="mdi:check" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="d-flex align-items-center gap-2">
-                        ${user.balance.toLocaleString()}
-                        <button
-                          className="btn btn-sm btn-primary-light p-0"
-                          onClick={() =>
-                            handleEditBalance(user.userId, user.balance)
-                          }
-                        >
-                          <Icon icon="lucide:edit" className="text-sm" />
-                        </button>
-                      </div>
-                    )}
+                    <div className="d-flex align-items-center gap-2">
+                      ${user.balance.toLocaleString()}
+                      <button
+                        className="btn btn-sm btn-primary-light p-0"
+                        onClick={() => handleEditClick(user.userId)}
+                      >
+                        <Icon icon="lucide:edit" className="text-sm" />
+                      </button>
+                    </div>
                   </td>
                   <td>
                     <span
@@ -385,6 +396,102 @@ const AllUsersLayer = () => {
                   onClick={handleUnblockConfirm}
                 >
                   Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Balance Modal */}
+      {showEditModal && (
+        <div
+          className="modal fade show d-block"
+          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+          tabIndex="-1"
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Edit Balance</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowEditModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label">Action</label>
+                  <div className="d-flex gap-3">
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="editAction"
+                        id="add"
+                        value="add"
+                        checked={editAction === 'add'}
+                        onChange={() => setEditAction('add')}
+                      />
+                      <label className="form-check-label" htmlFor="add">
+                        Add
+                      </label>
+                    </div>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="editAction"
+                        id="deduct"
+                        value="deduct"
+                        checked={editAction === 'deduct'}
+                        onChange={() => setEditAction('deduct')}
+                      />
+                      <label className="form-check-label" htmlFor="deduct">
+                        Deduct
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Amount</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={editAmount}
+                    onChange={(e) => setEditAmount(e.target.value)}
+                    placeholder="Enter amount"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Reason</label>
+                  <textarea
+                    className="form-control"
+                    rows="4"
+                    value={editReason}
+                    onChange={(e) => setEditReason(e.target.value)}
+                    placeholder="Enter the reason for this adjustment"
+                  ></textarea>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowEditModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary-600"
+                  onClick={handleEditSubmit}
+                  disabled={!editAmount || !editReason.trim()}
+                >
+                  Submit
                 </button>
               </div>
             </div>

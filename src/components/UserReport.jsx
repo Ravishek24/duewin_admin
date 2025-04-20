@@ -1,5 +1,7 @@
+
 import React, { useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { Link } from "react-router-dom";
 
 // Mock data for team summary (replace with API data)
 const teamSummary = [
@@ -116,6 +118,7 @@ const UserReport = () => {
   const [usersByLevel, setUsersByLevel] = useState(levelUsers);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Open user profile modal
   const openProfileModal = (userId) => {
@@ -129,12 +132,48 @@ const UserReport = () => {
     setSelectedUser(null);
   };
 
+  // Handle search input change
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  // Filter users based on search query
+  const filteredUsersByLevel = Object.keys(usersByLevel).reduce((acc, level) => {
+    const filteredUsers = usersByLevel[level].filter((user) => {
+      const userProfile = userProfiles[user.userId];
+      return (
+        user.userId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        userProfile.mobileNumber.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    });
+    if (filteredUsers.length > 0) {
+      acc[level] = filteredUsers;
+    }
+    return acc;
+  }, {});
+
   return (
     <div className="card">
       <div className="card-header">
         <h2 className="text-xl font-semibold">User Report</h2>
       </div>
       <div className="card-body py-8">
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="input-group">
+            <span className="input-group-text">
+              <Icon icon="mdi:magnify" />
+            </span>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search by User ID or Mobile Number"
+              value={searchQuery}
+              onChange={handleSearch}
+            />
+          </div>
+        </div>
+
         {/* Team Summary Report */}
         <div className="mb-8">
           <h3 className="text-lg font-medium mb-4">Team Summary (Level-Wise)</h3>
@@ -152,7 +191,14 @@ const UserReport = () => {
                 {summary.length > 0 ? (
                   summary.map((level) => (
                     <tr key={level.level}>
-                      <td>Level {level.level}</td>
+                      <td>
+                        <Link
+                          to={`/level-details/${level.level}`}
+                          className="text-blue-600 hover:underline"
+                        >
+                          Level {level.level}
+                        </Link>
+                      </td>
                       <td>{level.totalRecharge}</td>
                       <td>{level.totalWithdraw}</td>
                       <td>{level.totalBalance}</td>
@@ -168,26 +214,41 @@ const UserReport = () => {
               </tbody>
             </table>
           </div>
+          <div className="mt-4">
+            <Link
+              to="/level-details/all"
+              className="text-blue-600 hover:underline text-sm"
+            >
+              View All Levels
+            </Link>
+          </div>
         </div>
 
         {/* Level-Wise User Report */}
         <div>
           <h3 className="text-lg font-medium mb-4">Level-Wise User Report</h3>
-          {Object.keys(usersByLevel).map((level) => (
-            <div key={level} className="mb-6">
-              <h4 className="text-base font-semibold mb-2">Level {level}</h4>
-              <div className="table-responsive scroll-sm">
-                <table className="table bordered-table text-sm w-full">
-                  <thead>
-                    <tr>
-                      <th className="text-sm">User ID</th>
-                      <th className="text-sm">Recharge</th>
-                      <th className="text-sm">Withdraw</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {usersByLevel[level].length > 0 ? (
-                      usersByLevel[level].map((user) => (
+          {Object.keys(filteredUsersByLevel).length > 0 ? (
+            Object.keys(filteredUsersByLevel).map((level) => (
+              <div key={level} className="mb-6">
+                <h4 className="text-base font-semibold mb-2">
+                  <Link
+                    to={`/level-details/${level}`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    Level {level}
+                  </Link>
+                </h4>
+                <div className="table-responsive scroll-sm">
+                  <table className="table bordered-table text-sm w-full">
+                    <thead>
+                      <tr>
+                        <th className="text-sm">User ID</th>
+                        <th className="text-sm">Recharge</th>
+                        <th className="text-sm">Withdraw</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredUsersByLevel[level].map((user) => (
                         <tr key={user.userId}>
                           <td>
                             <button
@@ -201,19 +262,17 @@ const UserReport = () => {
                           <td>{user.recharge}</td>
                           <td>{user.withdraw}</td>
                         </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="3" className="text-center py-4">
-                          No users in Level {level}
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="text-center py-4">
+              No users found matching the search criteria
             </div>
-          ))}
+          )}
         </div>
 
         {/* User Profile Modal */}
@@ -243,7 +302,7 @@ const UserReport = () => {
                 position: "relative",
                 transform: "translate(-50%, -50%)",
                 top: "50%",
-                left: "50%",
+                leftstuk: "50%",
               }}
             >
               <div

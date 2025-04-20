@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 
@@ -118,249 +119,164 @@ const NewWithdraw = () => {
   };
 
   return (
-    <div className="card">
-      <div className="card-header">
-        <h2 className="text-xl font-semibold">New Withdraw Requests</h2>
-      </div>
-      <div className="card-body py-8">
-        <div className="table-responsive scroll-sm">
-          <table className="table bordered-table text-sm w-full">
-            <thead>
-              <tr>
-                <th className="text-sm">User ID</th>
-                <th className="text-sm">Mobile Number</th>
-                <th className="text-sm">Order ID</th>
-                <th className="text-sm">Withdraw Type</th>
-                <th className="text-sm">Applied Amount</th>
-                <th className="text-sm">Balance After</th>
-                <th className="text-sm">Total Recharge</th>
-                <th className="text-sm">Total Withdraw</th>
-                <th className="text-sm">Bank Name</th>
-                <th className="text-sm">Account Number</th>
-                <th className="text-sm">IFSC Code</th>
-                <th className="text-sm">USDT Network</th>
-                <th className="text-sm">USDT Address</th>
-                <th className="text-sm">Address Alias</th>
-                <th className="text-sm">Apply Date & Time</th>
-                <th className="text-sm text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {withdraws.length > 0 ? (
-                withdraws.map((withdraw) => (
-                  <tr key={withdraw.orderId}>
-                    <td>{withdraw.userId}</td>
-                    <td>{withdraw.mobileNumber}</td>
-                    <td>{withdraw.orderId}</td>
-                    <td>{withdraw.withdrawType}</td>
-                    <td>{withdraw.appliedAmount}</td>
-                    <td>{withdraw.balanceAfterWithdraw}</td>
-                    <td>{withdraw.totalRechargeAmount}</td>
-                    <td>{withdraw.totalWithdrawAmount}</td>
-                    <td>{withdraw.bankName || "-"}</td>
-                    <td>{withdraw.accountNumber || "-"}</td>
-                    <td>{withdraw.ifscCode || "-"}</td>
-                    <td>{withdraw.usdtNetwork || "-"}</td>
-                    <td>{withdraw.usdtAddress || "-"}</td>
-                    <td>{withdraw.addressAlias || "-"}</td>
-                    <td>{withdraw.applyDateTime}</td>
-                    <td className="text-center">
-                      <div className="flex justify-center gap-2">
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-success radius-8 d-inline-flex align-items-center gap-1"
-                          onClick={() => openAcceptModal(withdraw.orderId)}
-                        >
-                          <Icon
-                            icon="simple-line-icons:check"
-                            className="text-xl"
-                          />
-                          Accept
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-danger radius-8 d-inline-flex align-items-center gap-1"
-                          onClick={() => openRejectModal(withdraw.orderId)}
-                        >
-                          <Icon
-                            icon="ic:twotone-close"
-                            className="text-xl"
-                          />
-                          Reject
-                        </button>
-                      </div>
+    <>
+      <style>
+        {`
+          .table-responsive.scroll-sm::-webkit-scrollbar {
+            width: 12px;  /* Vertical scrollbar width */
+            height: 12px; /* Horizontal scrollbar height */
+          }
+          .table-responsive.scroll-sm::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 6px;
+          }
+          .table-responsive.scroll-sm::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 6px;
+          }
+          .table-responsive.scroll-sm::-webkit-scrollbar-thumb:hover {
+            background: #555;
+          }
+          .table-responsive.scroll-sm {
+            scrollbar-width: auto; /* Firefox */
+            scrollbar-color: #888 #f1f1f1; /* Firefox */
+          }
+        `}
+      </style>
+      <div className="card">
+        <div className="card-header">
+          <h2 className="text-xl font-semibold">New Withdraw Requests</h2>
+        </div>
+        <div className="card-body py-8">
+          <div className="table-responsive scroll-sm">
+            <table className="table bordered-table text-sm w-full">
+              <thead>
+                <tr>
+                  <th className="text-sm">User ID</th>
+                  <th className="text-sm">Mobile Number</th>
+                  <th className="text-sm">Order ID</th>
+                  <th className="text-sm">Withdraw Type</th>
+                  <th className="text-sm">Applied Amount</th>
+                  <th className="text-sm">Balance After</th>
+                  <th className="text-sm">Total Recharge</th>
+                  <th className="text-sm">Total Withdraw</th>
+                  <th className="text-sm">Bank Name</th>
+                  <th className="text-sm">Account Number</th>
+                  <th className="text-sm">IFSC Code</th>
+                  <th className="text-sm">USDT Network</th>
+                  <th className="text-sm">USDT Address</th>
+                  <th className="text-sm">Address Alias</th>
+                  <th className="text-sm">Apply Date & Time</th>
+                  <th className="text-sm text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {withdraws.length > 0 ? (
+                  withdraws.map((withdraw) => (
+                    <tr key={withdraw.orderId}>
+                      <td>{withdraw.userId}</td>
+                      <td>{withdraw.mobileNumber}</td>
+                      <td>{withdraw.orderId}</td>
+                      <td>{withdraw.withdrawType}</td>
+                      <td>{withdraw.appliedAmount}</td>
+                      <td>{withdraw.balanceAfterWithdraw}</td>
+                      <td>{withdraw.totalRechargeAmount}</td>
+                      <td>{withdraw.totalWithdrawAmount}</td>
+                      <td>{withdraw.bankName || "-"}</td>
+                      <td>{withdraw.accountNumber || "-"}</td>
+                      <td>{withdraw.ifscCode || "-"}</td>
+                      <td>{withdraw.usdtNetwork || "-"}</td>
+                      <td>{withdraw.usdtAddress || "-"}</td>
+                      <td>{withdraw.addressAlias || "-"}</td>
+                      <td>{withdraw.applyDateTime}</td>
+                      <td className="text-center">
+                        <div className="flex justify-center gap-2">
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-success radius-8 d-inline-flex align-items-center gap-1"
+                            onClick={() => openAcceptModal(withdraw.orderId)}
+                          >
+                            <Icon
+                              icon="simple-line-icons:check"
+                              className="text-xl"
+                            />
+                            Accept
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-danger radius-8 d-inline-flex align-items-center gap-1"
+                            onClick={() => openRejectModal(withdraw.orderId)}
+                          >
+                            <Icon
+                              icon="ic:twotone-close"
+                              className="text-xl"
+                            />
+                            Reject
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="16" className="text-center py-4">
+                      No withdraw requests
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="16" className="text-center py-4">
-                    No withdraw requests
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                )}
+              </tbody>
+            </table>
+          </div>
 
-        {/* Accept Gateway Modal */}
-        {isAcceptModalOpen && (
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.3)",
-              zIndex: 1000,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+          {/* Accept Gateway Modal */}
+          {isAcceptModalOpen && (
             <div
               style={{
-                backgroundColor: "white",
-                borderRadius: "12px",
-                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
-                width: "100%",
-                maxWidth: "28rem",
-                padding: "1.5rem",
-                position: "relative",
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "rgba(0, 0, 0, 0.3)",
+                zIndex: 1000,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "1rem",
+                  backgroundColor: "white",
+                  borderRadius: "12px",
+                  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+                  width: "100%",
+                  maxWidth: "28rem",
+                  padding: "1.5rem",
+                  position: "relative",
                 }}
               >
-                <h3 style={{ fontSize: "1.25rem", fontWeight: "600" }}>
-                  Select Gateway
-                </h3>
-                <button
-                  type="button"
-                  onClick={closeAcceptModal}
-                  style={{ color: "#6b7280", fontSize: "1.25rem" }}
-                >
-                  <Icon icon="ic:twotone-close" />
-                </button>
-              </div>
-              <div style={{ marginBottom: "1rem" }}>
-                <label
-                  htmlFor="gateway"
+                <div
                   style={{
-                    display: "block",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    color: "#1f2937",
-                    marginBottom: "0.5rem",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "1rem",
                   }}
                 >
-                  Payment Gateway
-                </label>
-                <select
-                  id="gateway"
-                  value={selectedGateway}
-                  onChange={(e) => setSelectedGateway(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "0.5rem",
-                    border: "1px solid #d1d5db",
-                    borderRadius: "8px",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  <option value="">Select a gateway</option>
-                  {gateways.map((gateway) => (
-                    <option key={gateway} value={gateway}>
-                      {gateway}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
-                <button
-                  type="button"
-                  onClick={closeAcceptModal}
-                  className="btn btn-sm btn-secondary radius-8 px-3 py-1.5"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleGatewaySelect}
-                  className="btn btn-sm btn-success radius-8 px-3 py-1.5"
-                >
-                  <Icon icon="simple-line-icons:check" style={{ fontSize: "1rem" }} />
-                  Proceed
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Reject Remark Modal */}
-        {isRejectModalOpen && (
-          <div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.3)",
-              zIndex: 1000,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: "white",
-                borderRadius: "12px",
-                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
-                width: "100%",
-                maxWidth: "28rem",
-                overflow: "hidden",
-                position: "relative",
-                transform: "translate(-50%, -50%)",
-                top: "50%",
-                left: "50%",
-              }}
-            >
-              {/* Header */}
-              <div
-  style={{
-    background: "linear-gradient(to right, #ef4444, #b91c1c)",
-    padding: "2px 4px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  }}
->
-  <h3 style={{ color: "white", fontSize: "8px", fontWeight: "600" }}>
-    Reject Withdrawal
-  </h3>
-
-
-                <button
-                  type="button"
-                  onClick={closeRejectModal}
-                  style={{ color: "white", fontSize: "1.5rem" }}
-                >
-                  <Icon icon="ic:twotone-close" />
-                </button>
-              </div>
-              {/* Body */}
-              <div style={{ padding: "1.5rem" }}>
+                  <h3 style={{ fontSize: "1.25rem", fontWeight: "600" }}>
+                    Select Gateway
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={closeAcceptModal}
+                    style={{ color: "#6b7280", fontSize: "1.25rem" }}
+                  >
+                    <Icon icon="ic:twotone-close" />
+                  </button>
+                </div>
                 <div style={{ marginBottom: "1rem" }}>
                   <label
-                    htmlFor="rejectRemark"
+                    htmlFor="gateway"
                     style={{
                       display: "block",
                       fontSize: "0.875rem",
@@ -369,76 +285,184 @@ const NewWithdraw = () => {
                       marginBottom: "0.5rem",
                     }}
                   >
-                    Reason for Rejection
+                    Payment Gateway
                   </label>
-                  <textarea
-                    id="rejectRemark"
-                    value={rejectRemark}
-                    onChange={(e) => setRejectRemark(e.target.value)}
+                  <select
+                    id="gateway"
+                    value={selectedGateway}
+                    onChange={(e) => setSelectedGateway(e.target.value)}
                     style={{
                       width: "100%",
-                      padding: "0.75rem",
+                      padding: "0.5rem",
                       border: "1px solid #d1d5db",
                       borderRadius: "8px",
                       fontSize: "0.875rem",
-                      minHeight: "100px",
-                      resize: "none",
-                      transition: "box-shadow 0.2s",
                     }}
-                    placeholder="Enter reason for rejection..."
-                    aria-label="Reason for rejecting withdrawal"
-                    onFocus={(e) =>
-                      (e.target.style.boxShadow = "0 0 0 3px rgba(239, 68, 68, 0.2)")
-                    }
-                    onBlur={(e) => (e.target.style.boxShadow = "none")}
-                  />
+                  >
+                    <option value="">Select a gateway</option>
+                    {gateways.map((gateway) => (
+                      <option key={gateway} value={gateway}>
+                        {gateway}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
                   <button
                     type="button"
-                    onClick={closeRejectModal}
-                    style={{
-                      padding: "0.5rem 1rem",
-                      backgroundColor: "#e5e7eb",
-                      color: "#374151",
-                      borderRadius: "8px",
-                      fontSize: "0.875rem",
-                      fontWeight: "500",
-                      transition: "background-color 0.2s",
-                    }}
-                    onMouseOver={(e) => (e.target.style.backgroundColor = "#d1d5db")}
-                    onMouseOut={(e) => (e.target.style.backgroundColor = "#e5e7eb")}
+                    onClick={closeAcceptModal}
+                    className="btn btn-sm btn-secondary radius-8 px-3 py-1.5"
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
-                    onClick={handleRejectSubmit}
-                    style={{
-                      padding: "0.5rem 1rem",
-                      backgroundColor: "#ef4444",
-                      color: "white",
-                      borderRadius: "8px",
-                      fontSize: "0.875rem",
-                      fontWeight: "500",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.25rem",
-                      transition: "background-color 0.2s",
-                    }}
-                    onMouseOver={(e) => (e.target.style.backgroundColor = "#b91c1c")}
-                    onMouseOut={(e) => (e.target.style.backgroundColor = "#ef4444")}
+                    onClick={handleGatewaySelect}
+                    className="btn btn-sm btn-success radius-8 px-3 py-1.5"
                   >
-                    <Icon icon="ic:twotone-close" style={{ fontSize: "1rem" }} />
-                    Confirm
+                    <Icon icon="simple-line-icons:check" style={{ fontSize: "1rem" }} />
+                    Proceed
                   </button>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+
+          {/* Reject Remark Modal */}
+          {isRejectModalOpen && (
+            <div
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "rgba(0, 0, 0, 0.3)",
+                zIndex: 1000,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: "12px",
+                  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+                  width: "100%",
+                  maxWidth: "28rem",
+                  overflow: "hidden",
+                  position: "relative",
+                  transform: "translate(-50%, -50%)",
+                  top: "50%",
+                  left: "50%",
+                }}
+              >
+                {/* Header */}
+                <div
+                  style={{
+                    background: "linear-gradient(to right, #ef4444, #b91c1c)",
+                    padding: "1rem",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <h3 style={{ color: "white", fontSize: "1.25rem", fontWeight: "600" }}>
+                    Reject Withdrawal
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={closeRejectModal}
+                    style={{ color: "white", fontSize: "1.5rem" }}
+                  >
+                    <Icon icon="ic:twotone-close" />
+                  </button>
+                </div>
+                {/* Body */}
+                <div style={{ padding: "1.5rem" }}>
+                  <div style={{ marginBottom: "1rem" }}>
+                    <label
+                      htmlFor="rejectRemark"
+                      style={{
+                        display: "block",
+                        fontSize: "0.875rem",
+                        fontWeight: "500",
+                        color: "#1f2937",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      Reason for Rejection
+                    </label>
+                    <textarea
+                      id="rejectRemark"
+                      value={rejectRemark}
+                      onChange={(e) => setRejectRemark(e.target.value)}
+                      style={{
+                        width: "100%",
+                        padding: "0.75rem",
+                        border: "1px solid #d1d5db",
+                        borderRadius: "8px",
+                        fontSize: "0.875rem",
+                        minHeight: "100px",
+                        resize: "none",
+                        transition: "box-shadow 0.2s",
+                      }}
+                      placeholder="Enter reason for rejection..."
+                      aria-label="Reason for rejecting withdrawal"
+                      onFocus={(e) =>
+                        (e.target.style.boxShadow = "0 0 0 3px rgba(239, 68, 68, 0.2)")
+                      }
+                      onBlur={(e) => (e.target.style.boxShadow = "none")}
+                    />
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
+                    <button
+                      type="button"
+                      onClick={closeRejectModal}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "#e5e7eb",
+                        color: "#374151",
+                        borderRadius: "8px",
+                        fontSize: "0.875rem",
+                        fontWeight: "500",
+                        transition: "background-color 0.2s",
+                      }}
+                      onMouseOver={(e) => (e.target.style.backgroundColor = "#d1d5db")}
+                      onMouseOut={(e) => (e.target.style.backgroundColor = "#e5e7eb")}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleRejectSubmit}
+                      style={{
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "#ef4444",
+                        color: "white",
+                        borderRadius: "8px",
+                        fontSize: "0.875rem",
+                        fontWeight: "500",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.25rem",
+                        transition: "background-color 0.2s",
+                      }}
+                      onMouseOver={(e) => (e.target.style.backgroundColor = "#b91c1c")}
+                      onMouseOut={(e) => (e.target.style.backgroundColor = "#ef4444")}
+                    >
+                      <Icon icon="ic:twotone-close" style={{ fontSize: "1rem" }} />
+                      Confirm
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

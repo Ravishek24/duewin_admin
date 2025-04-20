@@ -104,6 +104,7 @@ import SubmittedWithdraw from "./components/child/SubmittedWithdraw";
 import SuccessWithdraw from "./components/SuccessWithdraw";
 import FailedWithdraw from "./components/FailedWithdraw";
 import UserReport from "./components/UserReport";
+import LevelDetails from "./components/LevelPage";
 
 function App() {
   return (
@@ -178,6 +179,7 @@ function App() {
         <Route exact path="/success-withdraw" element ={<SuccessWithdraw/>} />
         <Route exact path="/failed-withdraw" element ={<FailedWithdraw/>} />
         <Route exact path="/user-report" element ={<UserReport />} />
+        <Route exact path="/level-details/:level" element={<LevelDetails/>} />
 
 
 

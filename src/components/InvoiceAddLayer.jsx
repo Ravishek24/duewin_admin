@@ -1,3 +1,4 @@
+
 import { Icon } from '@iconify/react/dist/iconify.js';
 import React, { useState, useEffect } from 'react';
 
@@ -9,11 +10,11 @@ const sampleBets = {
     colors: { Big: 2, Small: 3, Green: 1, Violet: 0, Red: 10 },
     users: {
       Red: [
-        { userId: 'USR001', mobile: '+1234567890', amount: 100, betTime: '2025-04-13 10:30:00' },
-        { userId: 'USR002', mobile: '+1234567891', amount: 50, betTime: '2025-04-13 10:29:00' },
+        { userId: 'USR001', mobile: '+1234567890', amount: 100, betTime: '2025-04-13 10:30:00', balanceAfterBet: 4900 },
+        { userId: 'USR002', mobile: '+1234567891', amount: 50, betTime: '2025-04-13 10:29:00', balanceAfterBet: 2950 },
       ],
       '5': [
-        { userId: 'USR003', mobile: '+1234567892', amount: 75, betTime: '2025-04-13 10:28:00' },
+        { userId: 'USR003', mobile: '+1234567892', amount: 75, betTime: '2025-04-13 10:28:00', balanceAfterBet: 1925 },
       ],
     },
   },
@@ -63,11 +64,38 @@ const PredictionManagement = () => {
     }
   };
 
-  // Calculate total amount for a given number
-  const getTotalAmount = (number) => {
-    const users = currentBets.users[number] || [];
+  // Handle unset result
+  const handleUnsetResult = () => {
+    console.log('Result unset');
+    setSelectedResult('');
+    setShowResultModal(false);
+    // TODO: Call API to unset result (e.g., DELETE /api/wingo/${activePeriod}/result)
+  };
+
+  // Calculate total amount for a given number or color
+  const getTotalAmount = (value) => {
+    const users = currentBets.users[value] || [];
     return users.reduce((sum, user) => sum + user.amount, 0).toLocaleString();
   };
+
+  // Flatten user bets for the table
+  const getUserBets = () => {
+    const bets = [];
+    Object.entries(currentBets.users).forEach(([selection, users]) => {
+      users.forEach((user) => {
+        bets.push({
+          userId: user.userId,
+          mobile: user.mobile,
+          amount: user.amount,
+          selection,
+          balanceAfterBet: user.balanceAfterBet,
+        });
+      });
+    });
+    return bets;
+  };
+
+  const userBets = getUserBets();
 
   return (
     <div className="card">
@@ -96,55 +124,111 @@ const PredictionManagement = () => {
         </div>
 
         {/* Bet Display */}
-        <div className="p-4 bg-white rounded shadow-sm border border-primary-200 mb-4">
+        <div className="p-4 bg-white rounded-lg shadow-sm border border-primary-200 mb-4">
           <h6 className="mb-3 text-primary-600 fw-semibold">Numbers</h6>
-          <div className="d-flex flex-wrap gap-3 justify-content-center">
+          <div className="d-flex flex-wrap gap-4 justify-content-center">
             {Object.entries(currentBets.numbers).map(([number, count]) => (
-              <button
-                key={number}
-                className={`btn btn-sm position-relative ${count > 0 ? 'btn-success' : 'btn-secondary'} ${number === '0' ? 'gradient-red-violet' : number === '5' ? 'gradient-green-violet' : ''}`}
-                style={{ width: '80px', height: '80px', fontSize: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', borderRadius: '0' }}
-                onClick={() => handleBetClick('number', number)}
-              >
-                {number}
-                {count > 0 && <span className="badge bg-dark position-absolute top-50 end-0 translate-middle">{count}</span>}
-                <span className="badge bg-info position-absolute top-0 start-0 translate-middle-y">
-                  ${getTotalAmount(number)}
-                </span>
-              </button>
+              <div key={number} className="text-center">
+                <button
+                  className={`btn btn-sm position-relative ${count > 0 ? 'btn-success' : 'btn-secondary'} ${number === '0' ? 'gradient-red-violet' : number === '5' ? 'gradient-green-violet' : ''}`}
+                  style={{ 
+                    width: '80px', 
+                    height: '80px', 
+                    fontSize: '1.75rem', 
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.15)', 
+                    borderRadius: '8px', 
+                    transition: 'transform 0.2s' 
+                  }}
+                  onClick={() => handleBetClick('number', number)}
+                >
+                  {number}
+                  {count > 0 && (
+                    <span className="badge bg-dark position-absolute top-0 end-0 translate-middle rounded-circle" style={{ width: '24px', height: '24px', fontSize: '0.9rem' }}>
+                      {count}
+                    </span>
+                  )}
+                </button>
+                <div
+                  className="mt-2 bg-gray-200 text-black rounded-lg p-3"
+                  style={{
+                    minWidth: '200px',
+                    height: '50px',
+                    fontSize: '1.3rem',
+                    fontWeight: 'bold',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                    whiteSpace: 'nowrap',
+                    textAlign: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {getTotalAmount(number)}
+                </div>
+              </div>
             ))}
           </div>
           <h6 className="mt-4 mb-3 text-primary-600 fw-semibold">Other Bets</h6>
-          <div className="d-flex gap-3 justify-content-center">
+          <div className="d-flex gap-4 justify-content-center flex-wrap">
             {['Big', 'Small', 'Green', 'Violet', 'Red'].map((color) => (
-              <button
-                key={color}
-                className={`btn btn-sm ${currentBets.colors[color] > 0 ? '' : 'btn-secondary'} ${color.toLowerCase()}`}
-                style={{ width: '100px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
-                onClick={() => handleBetClick('color', color)}
-              >
-                {color} <span className="badge bg-dark">{currentBets.colors[color] || 0}</span>
-              </button>
+              <div key={color} className="text-center">
+                <button
+                  className={`btn btn-sm ${currentBets.colors[color] > 0 ? '' : 'btn-secondary'} ${color.toLowerCase()}`}
+                  style={{ 
+                    width: '100px', 
+                    padding: '10px', 
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.15)', 
+                    borderRadius: '8px' 
+                  }}
+                  onClick={() => handleBetClick('color', color)}
+                >
+                  {color} <span className="badge bg-dark rounded-pill" style={{ fontSize: '0.9rem' }}>{currentBets.colors[color] || 0}</span>
+                </button>
+                <div
+                  className="mt-2 bg-gray-200 text-black rounded-lg p-3"
+                  style={{
+                    minWidth: '200px',
+                    height: '50px',
+                    fontSize: '1.3rem',
+                    fontWeight: 'bold',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                    whiteSpace: 'nowrap',
+                    textAlign: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {getTotalAmount(color)}
+                </div>
+              </div>
             ))}
           </div>
         </div>
 
         {/* Set Result Box */}
-        <div className="p-4 bg-white rounded shadow-sm border border-primary-200 mb-4">
+        <div className="p-4 bg-white rounded-lg shadow-sm border border-primary-200 mb-4">
           <div className="text-center">
             <button
-              className="btn btn-lg btn-success w-50 py-3"
-              style={{ fontSize: '1.25rem' }}
+              className="btn btn-lg btn-success w-40 py-3 me-2"
+              style={{ fontSize: '1.25rem', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.15)' }}
               onClick={() => setShowResultModal(true)}
             >
               Set Result
+            </button>
+            <button
+              className="btn btn-lg btn-danger w-40 py-3"
+              style={{ fontSize: '1.25rem', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.15)' }}
+              onClick={handleUnsetResult}
+            >
+              Unset Result
             </button>
           </div>
         </div>
 
         {/* Bet List (Visible when a bet is selected) */}
         {selectedBet && (
-          <div className="p-4 bg-white rounded shadow-sm border border-primary-200 mb-4">
+          <div className="p-4 bg-white rounded-lg shadow-sm border border-primary-200 mb-4">
             <h6 className="mb-3 text-primary-600 fw-semibold">
               Users Betting on {selectedBet.type === 'number' ? `Number ${selectedBet.value}` : selectedBet.value}
             </h6>
@@ -182,7 +266,7 @@ const PredictionManagement = () => {
         )}
 
         {/* High Risk Users */}
-        <div className="p-4 bg-white rounded shadow-sm border border-primary-200 mb-4">
+        <div className="p-4 bg-white rounded-lg shadow-sm border border-primary-200 mb-4">
           <h6 className="mb-3 text-primary-600 fw-semibold">High Risk Users</h6>
           <div className="table-responsive" style={{ overflowX: 'auto' }}>
             <table className="table bordered-table mb-0" style={{ minWidth: '400px' }}>
@@ -200,7 +284,7 @@ const PredictionManagement = () => {
                       <td>{user.name}</td>
                       <td>${user.walletBalance.toLocaleString()}</td>
                       <td>
-                        <button className="btn btn-sm btn-danger">Block</button>
+                        <button className="btn btn-sm btn-danger" style={{ borderRadius: '6px' }}>Block</button>
                       </td>
                     </tr>
                   ))
@@ -216,22 +300,40 @@ const PredictionManagement = () => {
           </div>
         </div>
 
-        {/* Bet Distribution (Default Display) */}
-        <div className="p-4 bg-white rounded shadow-sm border border-primary-200">
+        {/* Bet Distribution Table */}
+        <div className="p-4 bg-white rounded-lg shadow-sm border border-primary-200">
           <h6 className="mb-3 text-primary-600 fw-semibold">Bet Distribution</h6>
-          <div className="row row-cols-5 g-3 mb-3">
-            {Object.entries(currentBets.numbers).map(([number, count]) => (
-              <div key={number} className="col text-center">
-                <span className="d-block text-secondary-600">No. {number}: {count}</span>
-              </div>
-            ))}
-          </div>
-          <div className="row row-cols-5 g-3">
-            {['Big', 'Small', 'Green', 'Violet', 'Red'].map((color) => (
-              <div key={color} className="col text-center">
-                <span className="d-block text-secondary-600">{color}: {currentBets.colors[color] || 0}</span>
-              </div>
-            ))}
+          <div className="table-responsive" style={{ overflowX: 'auto' }}>
+            <table className="table bordered-table mb-0" style={{ minWidth: '800px' }}>
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Mobile Number</th>
+                  <th>Bet Amount</th>
+                  <th>Selection</th>
+                  <th>Balance After Bet</th>
+                </tr>
+              </thead>
+              <tbody>
+                {userBets.length > 0 ? (
+                  userBets.map((bet, index) => (
+                    <tr key={index}>
+                      <td>{bet.userId}</td>
+                      <td>{bet.mobile}</td>
+                      <td>${bet.amount.toLocaleString()}</td>
+                      <td>{bet.selection}</td>
+                      <td>${bet.balanceAfterBet.toLocaleString()}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="text-center text-secondary-600">
+                      No bets placed for this period
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -298,19 +400,53 @@ const styles = `
   .gradient-red-violet {
     background: linear-gradient(to right, #ff0000 50%, #800080 50%);
     color: #fff;
+    transition: transform 0.2s;
+  }
+  .gradient-red-violet:hover {
+    transform: scale(1.05);
   }
   .gradient-green-violet {
     background: linear-gradient(to right, #00ff00 50%, #800080 50%);
     color: #fff;
+    transition: transform 0.2s;
+  }
+  .gradient-green-violet:hover {
+    transform: scale(1.05);
   }
   .big { background-color: #ffa500; color: #fff; }
   .small { background-color: #00ff00; color: #fff; }
   .green { background-color: #00ff00; color: #fff; }
   .violet { background-color: #800080; color: #fff; }
   .red { background-color: #ff0000; color: #fff; }
-  .btn-success:hover, .btn-danger:hover { opacity: 0.9; }
-  .badge { font-size: 0.75rem; }
-  .badge.bg-info { background-color: #17a2b8; color: #fff; }
+  .btn-success { 
+    background-color: #28a745; 
+    transition: transform 0.2s; 
+  }
+  .btn-success:hover { 
+    transform: scale(1.05); 
+    opacity: 0.9; 
+  }
+  .btn-secondary { 
+    background-color: #6c757d; 
+    transition: transform 0.2s; 
+  }
+  .btn-secondary:hover { 
+    transform: scale(1.05); 
+    opacity: 0.9; 
+  }
+  .btn-danger { 
+    background-color: #dc3545; 
+    transition: transform 0.2s; 
+  }
+  .btn-danger:hover { 
+    transform: scale(1.05); 
+    opacity: 0.9; 
+  }
+  .bg-gray-200 { background-color: #e5e7eb; }
+  .badge.bg-dark { 
+    background-color: #343a40; 
+    color: #fff; 
+  }
 `;
 
 const styleSheet = new CSSStyleSheet();

@@ -26,6 +26,22 @@ const sampleClaimHistory = [
   },
 ];
 
+// Sample gift code history data (replace with API data)
+const sampleGiftCodeHistory = [
+  {
+    code: 'GIFT-ABC123',
+    amount: 10,
+    userCount: 100,
+    generatedTime: '2025-04-13 08:00:00',
+  },
+  {
+    code: 'GIFT-XYZ789',
+    amount: 20,
+    userCount: 50,
+    generatedTime: '2025-04-12 12:30:00',
+  },
+];
+
 const InvoicePreviewLayer = () => {
   // State for gift creation form
   const [giftAmount, setGiftAmount] = useState('');
@@ -35,7 +51,12 @@ const InvoicePreviewLayer = () => {
 
   // State for claim history table
   const [claimHistory, setClaimHistory] = useState(sampleClaimHistory);
+  const [giftCodeHistory, setGiftCodeHistory] = useState(sampleGiftCodeHistory);
   const [sortConfig, setSortConfig] = useState({ key: 'claimedTime', direction: 'desc' });
+  const [giftSortConfig, setGiftSortConfig] = useState({ key: 'generatedTime', direction: 'desc' });
+
+  // State for active tab
+  const [activeTab, setActiveTab] = useState('claimHistory');
 
   // Handle gift code creation
   const handleCreateGift = (e) => {
@@ -57,6 +78,25 @@ const InvoicePreviewLayer = () => {
     // Simulate code generation (replace with API call)
     const newCode = `GIFT-${Math.random().toString(36).substr(2, 8).toUpperCase()}`;
     setGeneratedCode(newCode);
+
+    // Add to gift code history
+    setGiftCodeHistory((prev) => [
+      ...prev,
+      {
+        code: newCode,
+        amount,
+        userCount: users,
+        generatedTime: new Date().toLocaleString('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        }),
+      },
+    ]);
+
     setGiftAmount('');
     setUserCount('');
     // TODO: Call API to create gift code (e.g., POST /api/gifts { amount, userCount })
@@ -68,14 +108,14 @@ const InvoicePreviewLayer = () => {
     alert('Gift code copied to clipboard!');
   };
 
-  // Sorting function for claim history
+  // Sorting function
   const sortData = (data, key, direction) => {
     return [...data].sort((a, b) => {
       let aValue = a[key];
       let bValue = b[key];
 
       // Handle date sorting
-      if (key === 'claimedTime') {
+      if (key === 'claimedTime' || key === 'generatedTime') {
         aValue = new Date(aValue);
         bValue = new Date(bValue);
       }
@@ -86,6 +126,7 @@ const InvoicePreviewLayer = () => {
     });
   };
 
+  // Handle sorting for claim history
   const handleSort = (key) => {
     setSortConfig((prev) => ({
       key,
@@ -93,8 +134,17 @@ const InvoicePreviewLayer = () => {
     }));
   };
 
-  // Sorted claim history
+  // Handle sorting for gift code history
+  const handleGiftSort = (key) => {
+    setGiftSortConfig((prev) => ({
+      key,
+      direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc',
+    }));
+  };
+
+  // Sorted data
   const sortedClaimHistory = sortData(claimHistory, sortConfig.key, sortConfig.direction);
+  const sortedGiftCodeHistory = sortData(giftCodeHistory, giftSortConfig.key, giftSortConfig.direction);
 
   return (
     <div className="card">
@@ -165,117 +215,238 @@ const InvoicePreviewLayer = () => {
             </div>
           </div>
 
-          {/* Gift Claim History Section */}
+          {/* Tabs and History Section */}
           <div className="col-lg-12">
             <div className="p-4 bg-base rounded shadow-4">
-              <h6 className="mb-3">Gift Claim History</h6>
-              <div className="table-responsive" style={{ overflowX: 'auto' }}>
-                <table className="table bordered-table mb-0" style={{ minWidth: '800px' }}>
-                  <thead>
-                    <tr>
-                      <th
-                        className="cursor-pointer"
-                        onClick={() => handleSort('userId')}
-                      >
-                        User ID
-                        {sortConfig.key === 'userId' && (
-                          <Icon
-                            icon={
-                              sortConfig.direction === 'asc'
-                                ? 'bxs:up-arrow'
-                                : 'bxs:down-arrow'
-                            }
-                            className="text-xs ms-1"
-                          />
-                        )}
-                      </th>
-                      <th
-                        className="cursor-pointer"
-                        onClick={() => handleSort('mobile')}
-                      >
-                        Mobile Number
-                        {sortConfig.key === 'mobile' && (
-                          <Icon
-                            icon={
-                              sortConfig.direction === 'asc'
-                                ? 'bxs:up-arrow'
-                                : 'bxs:down-arrow'
-                            }
-                            className="text-xs ms-1"
-                          />
-                        )}
-                      </th>
-                      <th
-                        className="cursor-pointer"
-                        onClick={() => handleSort('claimIp')}
-                      >
-                        Claim IP
-                        {sortConfig.key === 'claimIp' && (
-                          <Icon
-                            icon={
-                              sortConfig.direction === 'asc'
-                                ? 'bxs:up-arrow'
-                                : 'bxs:down-arrow'
-                            }
-                            className="text-xs ms-1"
-                          />
-                        )}
-                      </th>
-                      <th
-                        className="cursor-pointer"
-                        onClick={() => handleSort('claimedTime')}
-                      >
-                        Claimed Time
-                        {sortConfig.key === 'claimedTime' && (
-                          <Icon
-                            icon={
-                              sortConfig.direction === 'asc'
-                                ? 'bxs:up-arrow'
-                                : 'bxs:down-arrow'
-                            }
-                            className="text-xs ms-1"
-                          />
-                        )}
-                      </th>
-                      <th
-                        className="cursor-pointer"
-                        onClick={() => handleSort('claimAmount')}
-                      >
-                        Claim Amount (INR)
-                        {sortConfig.key === 'claimAmount' && (
-                          <Icon
-                            icon={
-                              sortConfig.direction === 'asc'
-                                ? 'bxs:up-arrow'
-                                : 'bxs:down-arrow'
-                            }
-                            className="text-xs ms-1"
-                          />
-                        )}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sortedClaimHistory.length > 0 ? (
-                      sortedClaimHistory.map((claim, index) => (
-                        <tr key={index}>
-                          <td>{claim.userId}</td>
-                          <td>{claim.mobile}</td>
-                          <td>{claim.claimIp}</td>
-                          <td>{claim.claimedTime}</td>
-                          <td>₹{claim.claimAmount.toLocaleString()}</td>
+              {/* Tab Navigation */}
+              <ul className="nav nav-tabs mb-3">
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${activeTab === 'claimHistory' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('claimHistory')}
+                  >
+                    Gift Claim History
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${activeTab === 'history' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('history')}
+                  >
+                    History
+                  </button>
+                </li>
+              </ul>
+
+              {/* Tab Content */}
+              {activeTab === 'claimHistory' && (
+                <div>
+                  <h6 className="mb-3">Gift Claim History</h6>
+                  <div className="table-responsive" style={{ overflowX: 'auto' }}>
+                    <table className="table bordered-table mb-0" style={{ minWidth: '800px' }}>
+                      <thead>
+                        <tr>
+                          <th
+                            className="cursor-pointer"
+                            onClick={() => handleSort('userId')}
+                          >
+                            User ID
+                            {sortConfig.key === 'userId' && (
+                              <Icon
+                                icon={
+                                  sortConfig.direction === 'asc'
+                                    ? 'bxs:up-arrow'
+                                    : 'bxs:down-arrow'
+                                }
+                                className="text-xs ms-1"
+                              />
+                            )}
+                          </th>
+                          <th
+                            className="cursor-pointer"
+                            onClick={() => handleSort('mobile')}
+                          >
+                            Mobile Number
+                            {sortConfig.key === 'mobile' && (
+                              <Icon
+                                icon={
+                                  sortConfig.direction === 'asc'
+                                    ? 'bxs:up-arrow'
+                                    : 'bxs:down-arrow'
+                                }
+                                className="text-xs ms-1"
+                              />
+                            )}
+                          </th>
+                          <th
+                            className="cursor-pointer"
+                            onClick={() => handleSort('claimIp')}
+                          >
+                            Claim IP
+                            {sortConfig.key === 'claimIp' && (
+                              <Icon
+                                icon={
+                                  sortConfig.direction === 'asc'
+                                    ? 'bxs:up-arrow'
+                                    : 'bxs:down-arrow'
+                                }
+                                className="text-xs ms-1"
+                              />
+                            )}
+                          </th>
+                          <th
+                            className="cursor-pointer"
+                            onClick={() => handleSort('claimedTime')}
+                          >
+                            Claimed Time
+                            {sortConfig.key === 'claimedTime' && (
+                              <Icon
+                                icon={
+                                  sortConfig.direction === 'asc'
+                                    ? 'bxs:up-arrow'
+                                    : 'bxs:down-arrow'
+                                }
+                                className="text-xs ms-1"
+                              />
+                            )}
+                          </th>
+                          <th
+                            className="cursor-pointer"
+                            onClick={() => handleSort('claimAmount')}
+                          >
+                            Claim Amount (INR)
+                            {sortConfig.key === 'claimAmount' && (
+                              <Icon
+                                icon={
+                                  sortConfig.direction === 'asc'
+                                    ? 'bxs:up-arrow'
+                                    : 'bxs:down-arrow'
+                                }
+                                className="text-xs ms-1"
+                              />
+                            )}
+                          </th>
                         </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="5" className="text-center">
-                          No gift claims found
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                      </thead>
+                      <tbody>
+                        {sortedClaimHistory.length > 0 ? (
+                          sortedClaimHistory.map((claim, index) => (
+                            <tr key={index}>
+                              <td>{claim.userId}</td>
+                              <td>{claim.mobile}</td>
+                              <td>{claim.claimIp}</td>
+                              <td>{claim.claimedTime}</td>
+                              <td>₹{claim.claimAmount.toLocaleString()}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="5" className="text-center">
+                              No gift claims found
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'history' && (
+                <div>
+                  <h6 className="mb-3">Gift Code Generation History</h6>
+                  <div className="table-responsive" style={{ overflowX: 'auto' }}>
+                    <table className="table bordered-table mb-0" style={{ minWidth: '600px' }}>
+                      <thead>
+                        <tr>
+                          <th
+                            className="cursor-pointer"
+                            onClick={() => handleGiftSort('code')}
+                          >
+                            Gift Code
+                            {giftSortConfig.key === 'code' && (
+                              <Icon
+                                icon={
+                                  giftSortConfig.direction === 'asc'
+                                    ? 'bxs:up-arrow'
+                                    : 'bxs:down-arrow'
+                                }
+                                className="text-xs ms-1"
+                              />
+                            )}
+                          </th>
+                          <th
+                            className="cursor-pointer"
+                            onClick={() => handleGiftSort('amount')}
+                          >
+                            Amount (INR)
+                            {giftSortConfig.key === 'amount' && (
+                              <Icon
+                                icon={
+                                  giftSortConfig.direction === 'asc'
+                                    ? 'bxs:up-arrow'
+                                    : 'bxs:down-arrow'
+                                }
+                                className="text-xs ms-1"
+                              />
+                            )}
+                          </th>
+                          <th
+                            className="cursor-pointer"
+                            onClick={() => handleGiftSort('userCount')}
+                          >
+                            Number of Users
+                            {giftSortConfig.key === 'userCount' && (
+                              <Icon
+                                icon={
+                                  giftSortConfig.direction === 'asc'
+                                    ? 'bxs:up-arrow'
+                                    : 'bxs:down-arrow'
+                                }
+                                className="text-xs ms-1"
+                              />
+                            )}
+                          </th>
+                          <th
+                            className="cursor-pointer"
+                            onClick={() => handleGiftSort('generatedTime')}
+                          >
+                            Generated Time
+                            {giftSortConfig.key === 'generatedTime' && (
+                              <Icon
+                                icon={
+                                  giftSortConfig.direction === 'asc'
+                                    ? 'bxs:up-arrow'
+                                    : 'bxs:down-arrow'
+                                }
+                                className="text-xs ms-1"
+                              />
+                            )}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sortedGiftCodeHistory.length > 0 ? (
+                          sortedGiftCodeHistory.map((gift, index) => (
+                            <tr key={index}>
+                              <td>{gift.code}</td>
+                              <td>₹{gift.amount.toLocaleString()}</td>
+                              <td>{gift.userCount}</td>
+                              <td>{gift.generatedTime}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="4" className="text-center">
+                              No gift codes generated
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -285,4 +456,3 @@ const InvoicePreviewLayer = () => {
 };
 
 export default InvoicePreviewLayer;
-
