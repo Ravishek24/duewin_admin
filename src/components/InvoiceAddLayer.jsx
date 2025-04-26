@@ -266,39 +266,7 @@ const PredictionManagement = () => {
         )}
 
         {/* High Risk Users */}
-        <div className="p-4 bg-white rounded-lg shadow-sm border border-primary-200 mb-4">
-          <h6 className="mb-3 text-primary-600 fw-semibold">High Risk Users</h6>
-          <div className="table-responsive" style={{ overflowX: 'auto' }}>
-            <table className="table bordered-table mb-0" style={{ minWidth: '400px' }}>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Wallet Balance</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {highRiskUsers.length > 0 ? (
-                  highRiskUsers.map((user, index) => (
-                    <tr key={index}>
-                      <td>{user.name}</td>
-                      <td>${user.walletBalance.toLocaleString()}</td>
-                      <td>
-                        <button className="btn btn-sm btn-danger" style={{ borderRadius: '6px' }}>Block</button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="3" className="text-center text-secondary-600">
-                      No high-risk users
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        
 
         {/* Bet Distribution Table */}
         <div className="p-4 bg-white rounded-lg shadow-sm border border-primary-200">

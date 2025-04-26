@@ -1,4 +1,3 @@
-
 import { Icon } from '@iconify/react/dist/iconify.js';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -13,6 +12,7 @@ const usersData = [
     loginIp: '192.168.1.1',
     totalDeposit: 10000,
     totalWithdrawal: 5000,
+    totalCommission: 1500, // Added commission field
     isBlocked: false,
   },
   {
@@ -23,6 +23,7 @@ const usersData = [
     loginIp: '192.168.1.2',
     totalDeposit: 8000,
     totalWithdrawal: 4000,
+    totalCommission: 1200, // Added commission field
     isBlocked: true,
   },
   {
@@ -33,6 +34,7 @@ const usersData = [
     loginIp: '192.168.1.3',
     totalDeposit: 6000,
     totalWithdrawal: 3000,
+    totalCommission: 800, // Added commission field
     isBlocked: false,
   },
 ];
@@ -180,7 +182,7 @@ const AllUsersLayer = () => {
       <div className="card-body">
         {/* Scrollable Table Wrapper */}
         <div className="table-responsive" style={{ overflowX: 'auto' }}>
-          <table className="table bordered-table mb-0" style={{ minWidth: '1000px' }}>
+          <table className="table bordered-table mb-0" style={{ minWidth: '1100px' }}>
             <thead>
               <tr>
                 <th scope="col">
@@ -202,6 +204,7 @@ const AllUsersLayer = () => {
                 <th scope="col">Login IP</th>
                 <th scope="col">Total Deposit</th>
                 <th scope="col">Total Withdrawal</th>
+                <th scope="col">Commission Detail</th>
                 <th scope="col">Block/Unblock</th>
                 <th scope="col">More Info</th>
               </tr>
@@ -248,6 +251,7 @@ const AllUsersLayer = () => {
                   <td>{user.loginIp}</td>
                   <td>${user.totalDeposit.toLocaleString()}</td>
                   <td>${user.totalWithdrawal.toLocaleString()}</td>
+                  <td>${user.totalCommission.toLocaleString()}</td>
                   <td>
                     {user.isBlocked ? (
                       <button

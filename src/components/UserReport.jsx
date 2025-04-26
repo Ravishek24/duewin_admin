@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Link } from "react-router-dom";
@@ -13,28 +12,83 @@ const teamSummary = [
   { level: 6, totalRecharge: "₹5000", totalWithdraw: "₹4000", totalBalance: "₹1000" },
 ];
 
-// Mock data for level-wise users (replace with API data)
-const levelUsers = {
+// Mock data for level-wise users (Total Report)
+const levelUsersTotal = {
+  1: {
+    users: [
+      { userId: "USR001", recharge: "₹20000", withdraw: "₹12000" },
+      { userId: "USR002", recharge: "₹30000", withdraw: "₹18000" },
+    ],
+    summary: {
+      numberOfRegister: 0,
+      depositNumber: 0,
+      depositAmount: "₹0",
+      firstDepositCount: 0,
+    },
+  },
+  2: {
+    users: [
+      { userId: "USR003", recharge: "₹25000", withdraw: "₹15000" },
+      { userId: "USR004", recharge: "₹15000", withdraw: "₹10000" },
+    ],
+    summary: {
+      numberOfRegister: 0,
+      depositNumber: 0,
+      depositAmount: "₹0",
+      firstDepositCount: 0,
+    },
+  },
+  3: {
+    users: [{ userId: "USR005", recharge: "₹18000", withdraw: "₹12000" }],
+    summary: {
+      numberOfRegister: 0,
+      depositNumber: 0,
+      depositAmount: "₹0",
+      firstDepositCount: 0,
+    },
+  },
+  4: {
+    users: [{ userId: "USR006", recharge: "₹12000", withdraw: "₹9000" }],
+    summary: {
+      numberOfRegister: 0,
+      depositNumber: 0,
+      depositAmount: "₹0",
+      firstDepositCount: 0,
+    },
+  },
+  5: {
+    users: [{ userId: "USR007", recharge: "₹7000", withdraw: "₹5000" }],
+    summary: {
+      numberOfRegister: 0,
+      depositNumber: 0,
+      depositAmount: "₹0",
+      firstDepositCount: 0,
+    },
+  },
+  6: {
+    users: [{ userId: "USR008", recharge: "₹5000", withdraw: "₹4000" }],
+    summary: {
+      numberOfRegister: 0,
+      depositNumber: 0,
+      depositAmount: "₹0",
+      firstDepositCount: 0,
+    },
+  },
+};
+
+// Mock data for Today Report (subset of Total, replace with API data)
+const levelUsersToday = {
+  1: [{ userId: "USR001", recharge: "₹5000", withdraw: "₹3000" }],
+  2: [{ userId: "USR003", recharge: "₹6000", withdraw: "₹4000" }],
+};
+
+// Mock data for Yesterday Report (subset of Total, replace with API data)
+const levelUsersYesterday = {
   1: [
-    { userId: "USR001", recharge: "₹20000", withdraw: "₹12000" },
-    { userId: "USR002", recharge: "₹30000", withdraw: "₹18000" },
+    { userId: "USR001", recharge: "₹7000", withdraw: "₹4000" },
+    { userId: "USR002", recharge: "₹8000", withdraw: "₹5000" },
   ],
-  2: [
-    { userId: "USR003", recharge: "₹25000", withdraw: "₹15000" },
-    { userId: "USR004", recharge: "₹15000", withdraw: "₹10000" },
-  ],
-  3: [
-    { userId: "USR005", recharge: "₹18000", withdraw: "₹12000" },
-  ],
-  4: [
-    { userId: "USR006", recharge: "₹12000", withdraw: "₹9000" },
-  ],
-  5: [
-    { userId: "USR007", recharge: "₹7000", withdraw: "₹5000" },
-  ],
-  6: [
-    { userId: "USR008", recharge: "₹5000", withdraw: "₹4000" },
-  ],
+  3: [{ userId: "USR005", recharge: "₹5000", withdraw: "₹3000" }],
 };
 
 // Mock user profiles (replace with API data)
@@ -114,10 +168,11 @@ const userProfiles = {
 };
 
 const UserReport = () => {
-  const [summary, setSummary] = useState(teamSummary);
-  const [usersByLevel, setUsersByLevel] = useState(levelUsers);
+  const [summary] = useState(teamSummary);
+  const [activeTab, setActiveTab] = useState("total");
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
   // Open user profile modal
@@ -133,21 +188,39 @@ const UserReport = () => {
   };
 
   // Handle search input change
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
+  const handleSearchInput = (e) => {
+    setSearchInput(e.target.value);
+  };
+
+  // Handle search button click
+  const handleSearch = () => {
+    setSearchQuery(searchInput);
+  };
+
+  // Select data based on active tab
+  const getUsersByLevel = () => {
+    switch (activeTab) {
+      case "today":
+        return levelUsersToday;
+      case "yesterday":
+        return levelUsersYesterday;
+      case "total":
+      default:
+        return levelUsersTotal;
+    }
   };
 
   // Filter users based on search query
-  const filteredUsersByLevel = Object.keys(usersByLevel).reduce((acc, level) => {
-    const filteredUsers = usersByLevel[level].filter((user) => {
+  const filteredUsersByLevel = Object.keys(getUsersByLevel()).reduce((acc, level) => {
+    const filteredUsers = getUsersByLevel()[level].users.filter((user) => {
       const userProfile = userProfiles[user.userId];
       return (
         user.userId.toLowerCase().includes(searchQuery.toLowerCase()) ||
         userProfile.mobileNumber.toLowerCase().includes(searchQuery.toLowerCase())
       );
     });
-    if (filteredUsers.length > 0) {
-      acc[level] = filteredUsers;
+    if (filteredUsers.length > 0 || activeTab === "total") {
+      acc[level] = { ...getUsersByLevel()[level], users: filteredUsers };
     }
     return acc;
   }, {});
@@ -158,7 +231,7 @@ const UserReport = () => {
         <h2 className="text-xl font-semibold">User Report</h2>
       </div>
       <div className="card-body py-8">
-        {/* Search Bar */}
+        {/* Search Bar with Button */}
         <div className="mb-6">
           <div className="input-group">
             <span className="input-group-text">
@@ -168,9 +241,16 @@ const UserReport = () => {
               type="text"
               className="form-control"
               placeholder="Search by User ID or Mobile Number"
-              value={searchQuery}
-              onChange={handleSearch}
+              value={searchInput}
+              onChange={handleSearchInput}
             />
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleSearch}
+            >
+              Search
+            </button>
           </div>
         </div>
 
@@ -227,6 +307,37 @@ const UserReport = () => {
         {/* Level-Wise User Report */}
         <div>
           <h3 className="text-lg font-medium mb-4">Level-Wise User Report</h3>
+          {/* Tabs */}
+          <div className="mb-4">
+            <ul className="nav nav-tabs">
+              <li className="nav-item">
+                <button
+                  className={`nav-link ${activeTab === "today" ? "active" : ""}`}
+                  onClick={() => setActiveTab("today")}
+                >
+                  Today Report
+                </button>
+              </li>
+              <li className="nav-item">
+                <button
+                  className={`nav-link ${activeTab === "total" ? "active" : ""}`}
+                  onClick={() => setActiveTab("total")}
+                >
+                  Total Report
+                </button>
+              </li>
+              <li className="nav-item">
+                <button
+                  className={`nav-link ${activeTab === "yesterday" ? "active" : ""}`}
+                  onClick={() => setActiveTab("yesterday")}
+                >
+                  Yesterday Report
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          {/* Tab Content */}
           {Object.keys(filteredUsersByLevel).length > 0 ? (
             Object.keys(filteredUsersByLevel).map((level) => (
               <div key={level} className="mb-6">
@@ -245,10 +356,18 @@ const UserReport = () => {
                         <th className="text-sm">User ID</th>
                         <th className="text-sm">Recharge</th>
                         <th className="text-sm">Withdraw</th>
+                        {activeTab === "total" && (
+                          <>
+                            <th className="text-sm">Number of Register</th>
+                            <th className="text-sm">Deposit Number</th>
+                            <th className="text-sm">Deposit Amount</th>
+                            <th className="text-sm">Number of People Making First Deposit</th>
+                          </>
+                        )}
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredUsersByLevel[level].map((user) => (
+                      {filteredUsersByLevel[level].users.map((user) => (
                         <tr key={user.userId}>
                           <td>
                             <button
@@ -261,8 +380,27 @@ const UserReport = () => {
                           </td>
                           <td>{user.recharge}</td>
                           <td>{user.withdraw}</td>
+                          {activeTab === "total" && (
+                            <>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                            </>
+                          )}
                         </tr>
                       ))}
+                      {activeTab === "total" && (
+                        <tr className="font-semibold">
+                          <td>Level Total</td>
+                          <td></td>
+                          <td></td>
+                          <td>{filteredUsersByLevel[level].summary.numberOfRegister}</td>
+                          <td>{filteredUsersByLevel[level].summary.depositNumber}</td>
+                          <td>{filteredUsersByLevel[level].summary.depositAmount}</td>
+                          <td>{filteredUsersByLevel[level].summary.firstDepositCount}</td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -270,7 +408,7 @@ const UserReport = () => {
             ))
           ) : (
             <div className="text-center py-4">
-              No users found matching the search criteria
+              No users found for the selected report
             </div>
           )}
         </div>
@@ -302,7 +440,7 @@ const UserReport = () => {
                 position: "relative",
                 transform: "translate(-50%, -50%)",
                 top: "50%",
-                leftstuk: "50%",
+                left: "50%",
               }}
             >
               <div

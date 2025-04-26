@@ -347,7 +347,7 @@ const MasterLayout = ({ children }) => {
                     }
                   >
                     <i className='ri-circle-fill circle-icon text-danger-main w-auto' />{" "}
-                    Edit
+                    Recharge Management
                   </NavLink>
                 </li>
                 <li>
@@ -359,6 +359,17 @@ const MasterLayout = ({ children }) => {
                   >
                     <i className='ri-circle-fill circle-icon text-danger-main w-auto' />{" "}
                     User Report
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to='/activity-page-edit'
+                    className={(navData) =>
+                      navData.isActive ? "active-page" : ""
+                    }
+                  >
+                    <i className='ri-circle-fill circle-icon text-danger-main w-auto' />{" "}
+                    Activity Page edit
                   </NavLink>
                 </li>
               </ul>

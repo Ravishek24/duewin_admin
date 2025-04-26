@@ -2,6 +2,12 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+
+    const handleSessionEnd = () => {
+        // Add your session end logic here (e.g., clear session, redirect, etc.)
+        console.log('Session ended');
+    };
+
 const ChatMessageLayer = () => {
     return (
         <div className="chat-wrapper">
@@ -14,6 +20,7 @@ const ChatMessageLayer = () => {
                         <h6 className="text-md mb-0">Kathryn Murphy</h6>
                         <p className="mb-0">Available</p>
                     </div>
+                   
                     <div className="action">
                         <div className="btn-group">
                             <button
@@ -355,13 +362,16 @@ const ChatMessageLayer = () => {
                         <h6 className="text-md mb-0">Kathryn Murphy</h6>
                         <p className="mb-0">Available</p>
                     </div>
-                    <div className="action d-inline-flex align-items-center gap-3">
-                        <button type="button" className="text-xl text-primary-light">
-                            <Icon icon="mi:call" />
+                    <button
+                            type="button"
+                            className="btn btn-sm btn-danger-600 radius-8 d-inline-flex align-items-center gap-1 mr-4"
+                            onClick={handleSessionEnd}
+                        >
+                            End Session
+                            <Icon icon="mdi:logout" />
                         </button>
-                        <button type="button" className="text-xl text-primary-light">
-                            <Icon icon="fluent:video-32-regular" />
-                        </button>
+                    <div className="action d-inline-flex align-items-center gap-3 ml-4">
+                       
                         <div className="btn-group">
                             <button
                                 type="button"
