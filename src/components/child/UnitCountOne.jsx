@@ -1,32 +1,36 @@
-import React, { useState } from 'react';
-import { Icon } from '@iconify/react';
+import React, { useState } from "react";
+import { Icon } from "@iconify/react";
+import { Link } from "react-router-dom";
 
 // Sample data for demonstration (replace with API data)
 const topDeposits = [
-  { userId: 'USR001', mobile: '+1234567890', amount: 5000 },
-  { userId: 'USR002', mobile: '+1234567891', amount: 3000 },
-  { userId: 'USR003', mobile: '+1234567892', amount: 2000 },
-  { userId: 'USR004', mobile: '+1234567893', amount: 1500 },
-  { userId: 'USR005', mobile: '+1234567894', amount: 1000 },
+  { userId: "USR001", mobile: "+1234567890", amount: 5000 },
+  { userId: "USR002", mobile: "+1234567891", amount: 3000 },
+  { userId: "USR003", mobile: "+1234567892", amount: 2000 },
+  { userId: "USR004", mobile: "+1234567893", amount: 1500 },
+  { userId: "USR005", mobile: "+1234567894", amount: 1000 },
 ];
 
 const topWithdrawals = [
-  { userId: 'USR006', mobile: '+1234567895', amount: 4000 },
-  { userId: 'USR007', mobile: '+1234567896', amount: 2500 },
-  { userId: 'USR008', mobile: '+1234567897', amount: 1800 },
-  { userId: 'USR009', mobile: '+1234567898', amount: 1200 },
-  { userId: 'USR010', mobile: '+1234567899', amount: 900 },
+  { userId: "USR006", mobile: "+1234567895", amount: 4000 },
+  { userId: "USR007", mobile: "+1234567896", amount: 2500 },
+  { userId: "USR008", mobile: "+1234567897", amount: 1800 },
+  { userId: "USR009", mobile: "+1234567898", amount: 1200 },
+  { userId: "USR010", mobile: "+1234567899", amount: 900 },
 ];
 
 // New Component for Top Transactions
 const TopTransactions = () => {
-  const [sortConfig, setSortConfig] = useState({ key: 'amount', direction: 'desc' });
+  const [sortConfig, setSortConfig] = useState({
+    key: "amount",
+    direction: "desc",
+  });
 
   // Sorting function
   const sortData = (data, key, direction) => {
     return [...data].sort((a, b) => {
-      if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
-      if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+      if (a[key] < b[key]) return direction === "asc" ? -1 : 1;
+      if (a[key] > b[key]) return direction === "asc" ? 1 : -1;
       return 0;
     });
   };
@@ -34,13 +38,21 @@ const TopTransactions = () => {
   const handleSort = (key) => {
     setSortConfig((prev) => ({
       key,
-      direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc',
+      direction: prev.key === key && prev.direction === "desc" ? "asc" : "desc",
     }));
   };
 
   // Sorted data
-  const sortedDeposits = sortData(topDeposits, sortConfig.key, sortConfig.direction);
-  const sortedWithdrawals = sortData(topWithdrawals, sortConfig.key, sortConfig.direction);
+  const sortedDeposits = sortData(
+    topDeposits,
+    sortConfig.key,
+    sortConfig.direction
+  );
+  const sortedWithdrawals = sortData(
+    topWithdrawals,
+    sortConfig.key,
+    sortConfig.direction
+  );
 
   // Table component for reusability
   const TransactionTable = ({ title, data, type }) => (
@@ -53,15 +65,15 @@ const TopTransactions = () => {
               <tr>
                 <th
                   className="cursor-pointer"
-                  onClick={() => handleSort('userId')}
+                  onClick={() => handleSort("userId")}
                 >
                   User ID
-                  {sortConfig.key === 'userId' && (
+                  {sortConfig.key === "userId" && (
                     <Icon
                       icon={
-                        sortConfig.direction === 'asc'
-                          ? 'bxs:up-arrow'
-                          : 'bxs:down-arrow'
+                        sortConfig.direction === "asc"
+                          ? "bxs:up-arrow"
+                          : "bxs:down-arrow"
                       }
                       className="text-xs ms-1"
                     />
@@ -69,15 +81,15 @@ const TopTransactions = () => {
                 </th>
                 <th
                   className="cursor-pointer"
-                  onClick={() => handleSort('mobile')}
+                  onClick={() => handleSort("mobile")}
                 >
                   Mobile Number
-                  {sortConfig.key === 'mobile' && (
+                  {sortConfig.key === "mobile" && (
                     <Icon
                       icon={
-                        sortConfig.direction === 'asc'
-                          ? 'bxs:up-arrow'
-                          : 'bxs:down-arrow'
+                        sortConfig.direction === "asc"
+                          ? "bxs:up-arrow"
+                          : "bxs:down-arrow"
                       }
                       className="text-xs ms-1"
                     />
@@ -85,15 +97,15 @@ const TopTransactions = () => {
                 </th>
                 <th
                   className="cursor-pointer"
-                  onClick={() => handleSort('amount')}
+                  onClick={() => handleSort("amount")}
                 >
-                  {type === 'deposit' ? 'Deposit Amount' : 'Withdrawal Amount'}
-                  {sortConfig.key === 'amount' && (
+                  {type === "deposit" ? "Deposit Amount" : "Withdrawal Amount"}
+                  {sortConfig.key === "amount" && (
                     <Icon
                       icon={
-                        sortConfig.direction === 'asc'
-                          ? 'bxs:up-arrow'
-                          : 'bxs:down-arrow'
+                        sortConfig.direction === "asc"
+                          ? "bxs:up-arrow"
+                          : "bxs:down-arrow"
                       }
                       className="text-xs ms-1"
                     />
@@ -144,38 +156,39 @@ const DashboardStats = () => {
       <div className="row row-cols-xxxl-5 row-cols-lg-3 row-cols-sm-2 row-cols-1 gy-4">
         {/* Users Box */}
         <div className="col">
-          <div
-            className="card shadow-none border bg-gradient-start-1 h-100 cursor-pointer"
-            onClick={() => handleBoxClick('Users')}
-          >
-            <div className="card-body p-20">
-              <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                <div>
-                  <p className="fw-medium text-primary-light mb-1">Users</p>
-                  <h6 className="mb-0">20,000</h6>
-                </div>
-                <div className="w-50-px h-50-px bg-cyan rounded-circle d-flex justify-content-center align-items-center">
-                  <Icon
-                    icon="gridicons:multiple-users"
-                    className="text-white text-2xl mb-0"
-                  />
-                </div>
-              </div>
-              <p className="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
-                <span className="d-inline-flex align-items-center gap-1 text-success-main">
-                  <Icon icon="bxs:up-arrow" className="text-xs" /> +5000
-                </span>
-                Today: 150 | Blocked: 25
-              </p>
-            </div>
+  <Link to="invoice-list" className="text-decoration-none d-block">
+    <div
+      className="card shadow-none border bg-gradient-start-1 h-100 cursor-pointer"
+      onClick={() => handleBoxClick("Users")}
+    >
+      <div className="card-body p-20">
+        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
+          <div>
+            <p className="fw-medium text-primary-light mb-1">Users</p>
+            <h6 className="mb-0">20,000</h6>
+          </div>
+          <div className="w-50-px h-50-px bg-cyan rounded-circle d-flex justify-content-center align-items-center">
+            <Icon
+              icon="gridicons:multiple-users"
+              className="text-white text-2xl mb-0"
+            />
           </div>
         </div>
-
+        <p className="fw-medium text-sm text-primary-light mt-12 mb-0 d-flex align-items-center gap-2">
+          <span className="d-inline-flex align-items-center gap-1 text-success-main">
+            <Icon icon="bxs:up-arrow" className="text-xs" /> +5000
+          </span>
+          Today: 150 | Blocked: 25
+        </p>
+      </div>
+    </div>
+  </Link>
+</div>
         {/* Profit Box */}
         <div className="col">
           <div
             className="card shadow-none border bg-gradient-start-2 h-100 cursor-pointer"
-            onClick={() => handleBoxClick('Profit')}
+            onClick={() => handleBoxClick("Profit")}
           >
             <div className="card-body p-20">
               <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -202,9 +215,10 @@ const DashboardStats = () => {
 
         {/* Live Active Users */}
         <div className="col">
+        <Link to="invoice-list" className="text-decoration-none d-block">
           <div
             className="card shadow-none border bg-gradient-start-3 h-100 cursor-pointer"
-            onClick={() => handleBoxClick('Live Active Users')}
+            onClick={() => handleBoxClick("Live Active Users")}
           >
             <div className="card-body p-20">
               <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -229,18 +243,22 @@ const DashboardStats = () => {
               </p>
             </div>
           </div>
+          </Link>
         </div>
 
         {/* Today Bets */}
         <div className="col">
+        <Link to="invoice-add" className="text-decoration-none d-block">
           <div
             className="card shadow-none border bg-gradient-start-4 h-100 cursor-pointer"
-            onClick={() => handleBoxClick('Today Bets')}
+            onClick={() => handleBoxClick("Today Bets")}
           >
             <div className="card-body p-20">
               <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
                 <div>
-                  <p className="fw-medium text-primary-light mb-1">Today Bets</p>
+                  <p className="fw-medium text-primary-light mb-1">
+                    Today Bets
+                  </p>
                   <h6 className="mb-0">1,200</h6>
                 </div>
                 <div className="w-50-px h-50-px bg-success-main rounded-circle d-flex justify-content-center align-items-center">
@@ -258,13 +276,15 @@ const DashboardStats = () => {
               </p>
             </div>
           </div>
+          </Link>
         </div>
 
         {/* Today Recharges */}
         <div className="col">
+        <Link to="invoice-edit" className="text-decoration-none d-block">
           <div
             className="card shadow-none border bg-gradient-start-5 h-100 cursor-pointer"
-            onClick={() => handleBoxClick('Today Recharges')}
+            onClick={() => handleBoxClick("Today Recharges")}
           >
             <div className="card-body p-20">
               <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -289,13 +309,15 @@ const DashboardStats = () => {
               </p>
             </div>
           </div>
+          </Link>
         </div>
 
         {/* Total Recharges */}
         <div className="col">
+        <Link to="invoice-edit" className="text-decoration-none d-block">
           <div
             className="card shadow-none border bg-gradient-start-1 h-100 cursor-pointer"
-            onClick={() => handleBoxClick('Total Recharges')}
+            onClick={() => handleBoxClick("Total Recharges")}
           >
             <div className="card-body p-20">
               <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -320,13 +342,15 @@ const DashboardStats = () => {
               </p>
             </div>
           </div>
+          </Link>
         </div>
 
         {/* Today Withdrawals */}
         <div className="col">
+        <Link to="/new-withdraw" className="text-decoration-none d-block">
           <div
             className="card shadow-none border bg-gradient-start-2 h-100 cursor-pointer"
-            onClick={() => handleBoxClick('Today Withdrawals')}
+            onClick={() => handleBoxClick("Today Withdrawals")}
           >
             <div className="card-body p-20">
               <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -351,13 +375,15 @@ const DashboardStats = () => {
               </p>
             </div>
           </div>
+          </Link>
         </div>
 
         {/* Total Withdrawals */}
         <div className="col">
+        <Link to="/success-withdraw" className="text-decoration-none d-block">
           <div
             className="card shadow-none border bg-gradient-start-3 h-100 cursor-pointer"
-            onClick={() => handleBoxClick('Total Withdrawals')}
+            onClick={() => handleBoxClick("Total Withdrawals")}
           >
             <div className="card-body p-20">
               <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -382,13 +408,15 @@ const DashboardStats = () => {
               </p>
             </div>
           </div>
+          </Link>
         </div>
 
         {/* Pending Recharge */}
         <div className="col">
+        <Link to="invoice-edit" className="text-decoration-none d-block">
           <div
             className="card shadow-none border bg-gradient-start-4 h-100 cursor-pointer"
-            onClick={() => handleBoxClick('Pending Recharge')}
+            onClick={() => handleBoxClick("Pending Recharge")}
           >
             <div className="card-body p-20">
               <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -413,13 +441,15 @@ const DashboardStats = () => {
               </p>
             </div>
           </div>
+          </Link>
         </div>
 
         {/* Pending Withdrawal */}
         <div className="col">
+        <Link to="/submitted-withdraw" className="text-decoration-none d-block">
           <div
             className="card shadow-none border bg-gradient-start-5 h-100 cursor-pointer"
-            onClick={() => handleBoxClick('Pending Withdrawal')}
+            onClick={() => handleBoxClick("Pending Withdrawal")}
           >
             <div className="card-body p-20">
               <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -444,13 +474,14 @@ const DashboardStats = () => {
               </p>
             </div>
           </div>
+          </Link>
         </div>
 
         {/* Today First Recharges */}
         <div className="col">
           <div
             className="card shadow-none border bg-gradient-start-1 h-100 cursor-pointer"
-            onClick={() => handleBoxClick('First Recharges')}
+            onClick={() => handleBoxClick("First Recharges")}
           >
             <div className="card-body p-20">
               <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">

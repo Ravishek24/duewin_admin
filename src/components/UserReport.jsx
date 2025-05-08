@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Mock data for team summary (replace with API data)
 const teamSummary = [
@@ -19,11 +20,17 @@ const levelUsersTotal = {
       { userId: "USR001", recharge: "₹20000", withdraw: "₹12000" },
       { userId: "USR002", recharge: "₹30000", withdraw: "₹18000" },
     ],
-    summary: {
-      numberOfRegister: 0,
-      depositNumber: 0,
-      depositAmount: "₹0",
-      firstDepositCount: 0,
+    directSummary: {
+      numberOfRegister: 2,
+      depositNumber: 4,
+      depositAmount: "₹50000",
+      firstDepositCount: 2,
+    },
+    teamSummary: {
+      numberOfRegister: 8,
+      depositNumber: 12,
+      depositAmount: "₹150000",
+      firstDepositCount: 6,
     },
   },
   2: {
@@ -31,65 +38,171 @@ const levelUsersTotal = {
       { userId: "USR003", recharge: "₹25000", withdraw: "₹15000" },
       { userId: "USR004", recharge: "₹15000", withdraw: "₹10000" },
     ],
-    summary: {
-      numberOfRegister: 0,
-      depositNumber: 0,
-      depositAmount: "₹0",
-      firstDepositCount: 0,
+    directSummary: {
+      numberOfRegister: 2,
+      depositNumber: 3,
+      depositAmount: "₹40000",
+      firstDepositCount: 2,
+    },
+    teamSummary: {
+      numberOfRegister: 6,
+      depositNumber: 9,
+      depositAmount: "₹100000",
+      firstDepositCount: 4,
     },
   },
   3: {
     users: [{ userId: "USR005", recharge: "₹18000", withdraw: "₹12000" }],
-    summary: {
-      numberOfRegister: 0,
-      depositNumber: 0,
-      depositAmount: "₹0",
-      firstDepositCount: 0,
+    directSummary: {
+      numberOfRegister: 1,
+      depositNumber: 2,
+      depositAmount: "₹18000",
+      firstDepositCount: 1,
+    },
+    teamSummary: {
+      numberOfRegister: 3,
+      depositNumber: 5,
+      depositAmount: "₹50000",
+      firstDepositCount: 2,
     },
   },
   4: {
     users: [{ userId: "USR006", recharge: "₹12000", withdraw: "₹9000" }],
-    summary: {
-      numberOfRegister: 0,
-      depositNumber: 0,
-      depositAmount: "₹0",
-      firstDepositCount: 0,
+    directSummary: {
+      numberOfRegister: 1,
+      depositNumber: 1,
+      depositAmount: "₹12000",
+      firstDepositCount: 1,
+    },
+    teamSummary: {
+      numberOfRegister: 2,
+      depositNumber: 3,
+      depositAmount: "₹30000",
+      firstDepositCount: 1,
     },
   },
   5: {
     users: [{ userId: "USR007", recharge: "₹7000", withdraw: "₹5000" }],
-    summary: {
-      numberOfRegister: 0,
-      depositNumber: 0,
-      depositAmount: "₹0",
-      firstDepositCount: 0,
+    directSummary: {
+      numberOfRegister: 1,
+      depositNumber: 1,
+      depositAmount: "₹7000",
+      firstDepositCount: 1,
+    },
+    teamSummary: {
+      numberOfRegister: 1,
+      depositNumber: 2,
+      depositAmount: "₹15000",
+      firstDepositCount: 1,
     },
   },
   6: {
     users: [{ userId: "USR008", recharge: "₹5000", withdraw: "₹4000" }],
-    summary: {
-      numberOfRegister: 0,
-      depositNumber: 0,
-      depositAmount: "₹0",
+    directSummary: {
+      numberOfRegister: 1,
+      depositNumber: 1,
+      depositAmount: "₹5000",
+      firstDepositCount: 1,
+    },
+    teamSummary: {
+      numberOfRegister: 1,
+      depositNumber: 1,
+      depositAmount: "₹5000",
+      firstDepositCount: 1,
+    },
+  },
+};
+
+// Mock data for Today Report
+const levelUsersToday = {
+  1: {
+    users: [{ userId: "USR001", recharge: "₹5000", withdraw: "₹3000" }],
+    directSummary: {
+      numberOfRegister: 1,
+      depositNumber: 1,
+      depositAmount: "₹5000",
+      firstDepositCount: 0,
+    },
+    teamSummary: {
+      numberOfRegister: 2,
+      depositNumber: 3,
+      depositAmount: "₹10000",
+      firstDepositCount: 1,
+    },
+  },
+  2: {
+    users: [{ userId: "USR003", recharge: "₹6000", withdraw: "₹4000" }],
+    directSummary: {
+      numberOfRegister: 1,
+      depositNumber: 1,
+      depositAmount: "₹6000",
+      firstDepositCount: 0,
+    },
+    teamSummary: {
+      numberOfRegister: 1,
+      depositNumber: 2,
+      depositAmount: "₹8000",
+      firstDepositCount: 1,
+    },
+  },
+};
+
+// Mock data for Yesterday Report
+const levelUsersYesterday = {
+  1: {
+    users: [
+      { userId: "USR001", recharge: "₹7000", withdraw: "₹4000" },
+      { userId: "USR002", recharge: "₹8000", withdraw: "₹5000" },
+    ],
+    directSummary: {
+      numberOfRegister: 2,
+      depositNumber: 2,
+      depositAmount: "₹15000",
+      firstDepositCount: 1,
+    },
+    teamSummary: {
+      numberOfRegister: 3,
+      depositNumber: 4,
+      depositAmount: "₹20000",
+      firstDepositCount: 2,
+    },
+  },
+  3: {
+    users: [{ userId: "USR005", recharge: "₹5000", withdraw: "₹3000" }],
+    directSummary: {
+      numberOfRegister: 1,
+      depositNumber: 1,
+      depositAmount: "₹5000",
+      firstDepositCount: 0,
+    },
+    teamSummary: {
+      numberOfRegister: 1,
+      depositNumber: 1,
+      depositAmount: "₹5000",
       firstDepositCount: 0,
     },
   },
 };
 
-// Mock data for Today Report (subset of Total, replace with API data)
-const levelUsersToday = {
-  1: [{ userId: "USR001", recharge: "₹5000", withdraw: "₹3000" }],
-  2: [{ userId: "USR003", recharge: "₹6000", withdraw: "₹4000" }],
-};
+// Mock data for Today Salary Report
+const salaryReportToday = [
+  { level: 1, activeMembers: 2, totalDepositAmount: "₹10000" },
+  { level: 2, activeMembers: 1, totalDepositAmount: "₹6000" },
+  { level: 3, activeMembers: 0, totalDepositAmount: "₹0" },
+  { level: 4, activeMembers: 0, totalDepositAmount: "₹0" },
+  { level: 5, activeMembers: 0, totalDepositAmount: "₹0" },
+  { level: 6, activeMembers: 0, totalDepositAmount: "₹0" },
+];
 
-// Mock data for Yesterday Report (subset of Total, replace with API data)
-const levelUsersYesterday = {
-  1: [
-    { userId: "USR001", recharge: "₹7000", withdraw: "₹4000" },
-    { userId: "USR002", recharge: "₹8000", withdraw: "₹5000" },
-  ],
-  3: [{ userId: "USR005", recharge: "₹5000", withdraw: "₹3000" }],
-};
+// Mock data for Yesterday Salary Report
+const salaryReportYesterday = [
+  { level: 1, activeMembers: 3, totalDepositAmount: "₹15000" },
+  { level: 2, activeMembers: 0, totalDepositAmount: "₹0" },
+  { level: 3, activeMembers: 1, totalDepositAmount: "₹5000" },
+  { level: 4, activeMembers: 0, totalDepositAmount: "₹0" },
+  { level: 5, activeMembers: 0, totalDepositAmount: "₹0" },
+  { level: 6, activeMembers: 0, totalDepositAmount: "₹0" },
+];
 
 // Mock user profiles (replace with API data)
 const userProfiles = {
@@ -174,6 +287,8 @@ const UserReport = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+
 
   // Open user profile modal
   const openProfileModal = (userId) => {
@@ -205,8 +320,9 @@ const UserReport = () => {
       case "yesterday":
         return levelUsersYesterday;
       case "total":
-      default:
         return levelUsersTotal;
+      default:
+        return {};
     }
   };
 
@@ -225,12 +341,152 @@ const UserReport = () => {
     return acc;
   }, {});
 
+  // Render subordinate report (Today/Total/Yesterday)
+  const renderSubordinateReport = () => {
+    return (
+      <div>
+        {Object.keys(filteredUsersByLevel).length > 0 ? (
+          Object.keys(filteredUsersByLevel).map((level) => (
+            <div key={level} className="mb-6">
+              <h4 className="text-base font-semibold mb-2">
+                <Link
+                  to={`/level-details/${level}`}
+                  className="text-blue-600 hover:underline"
+                >
+                  Level {level}
+                </Link>
+              </h4>
+              {/* Direct Subordinate */}
+              <h5 className="text-sm font-medium mb-2">Direct Subordinate</h5>
+              <div className="table-responsive scroll-sm">
+                <table className="table bordered-table text-sm w-full">
+                  <thead>
+                    <tr>
+                      <th className="text-sm">Number of Register</th>
+                      <th className="text-sm">Deposit Number</th>
+                      <th className="text-sm">Deposit Amount</th>
+                      <th className="text-sm">Number of People Making First Deposit</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{filteredUsersByLevel[level].directSummary.numberOfRegister}</td>
+                      <td>{filteredUsersByLevel[level].directSummary.depositNumber}</td>
+                      <td>{filteredUsersByLevel[level].directSummary.depositAmount}</td>
+                      <td>{filteredUsersByLevel[level].directSummary.firstDepositCount}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              {/* Team Subordinate */}
+              <h5 className="text-sm font-medium mb-2 mt-4">Team Subordinate</h5>
+              <div className="table-responsive scroll-sm">
+                <table className="table bordered-table text-sm w-full">
+                  <thead>
+                    <tr>
+                      <th className="text-sm">Number of Register</th>
+                      <th className="text-sm">Deposit Number</th>
+                      <th className="text-sm">Deposit Amount</th>
+                      <th className="text-sm">Number of People Making First Deposit</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{filteredUsersByLevel[level].teamSummary.numberOfRegister}</td>
+                      <td>{filteredUsersByLevel[level].teamSummary.depositNumber}</td>
+                      <td>{filteredUsersByLevel[level].teamSummary.depositAmount}</td>
+                      <td>{filteredUsersByLevel[level].teamSummary.firstDepositCount}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              {/* User List */}
+              <h5 className="text-sm font-medium mb-2 mt-4">Users</h5>
+              <div className="table-responsive scroll-sm">
+                <table className="table bordered-table text-sm w-full">
+                  <thead>
+                    <tr>
+                      <th className="text-sm">User ID</th>
+                      <th className="text-sm">Recharge</th>
+                      <th className="text-sm">Withdraw</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredUsersByLevel[level].users.map((user) => (
+                      <tr key={user.userId}>
+                        <td>
+                          <button
+                            type="button"
+                            className="text-blue-600 hover:underline focus:outline-none"
+                            onClick={() => openProfileModal(user.userId)}
+                          >
+                            {user.userId}
+                          </button>
+                        </td>
+                        <td>{user.recharge}</td>
+                        <td>{user.withdraw}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-4">
+            No data found for the selected report
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Render salary report (Today/Yesterday)
+  const renderSalaryReport = (reportData) => {
+    return (
+      <div className="table-responsive scroll-sm">
+        <table className="table bordered-table text-sm w-full">
+          <thead>
+            <tr>
+              <th className="text-sm">Level</th>
+              <th className="text-sm">Active Members</th>
+              <th className="text-sm">Total Deposit Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reportData.map((level) => (
+              <tr key={level.level}>
+                <td>
+                  <Link
+                    to={`/level-details/${level.level}`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    Level {level.level}
+                  </Link>
+                </td>
+                <td>{level.activeMembers}</td>
+                <td>{level.totalDepositAmount}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
   return (
     <div className="card">
       <div className="card-header">
         <h2 className="text-xl font-semibold">User Report</h2>
       </div>
       <div className="card-body py-8">
+        <button
+            onClick={() => navigate(-1)}
+            className="btn btn-sm btn-outline-primary flex items-center gap-1 mb-4"
+          >
+            <Icon icon="ic:round-arrow-back" className="text-lg mb-4" />
+            Back
+          </button>
         {/* Search Bar with Button */}
         <div className="mb-6">
           <div className="input-group">
@@ -307,7 +563,7 @@ const UserReport = () => {
         {/* Level-Wise User Report */}
         <div>
           <h3 className="text-lg font-medium mb-4">Level-Wise User Report</h3>
-          {/* Tabs */}
+          
           <div className="mb-4">
             <ul className="nav nav-tabs">
               <li className="nav-item">
@@ -334,83 +590,31 @@ const UserReport = () => {
                   Yesterday Report
                 </button>
               </li>
+              <li className="nav-item">
+                <button
+                  className={`nav-link ${activeTab === "todaySalary" ? "active" : ""}`}
+                  onClick={() => setActiveTab("todaySalary")}
+                >
+                  Today Salary Report
+                </button>
+              </li>
+              <li className="nav-item">
+                <button
+                  className={`nav-link ${activeTab === "yesterdaySalary" ? "active" : ""}`}
+                  onClick={() => setActiveTab("yesterdaySalary")}
+                >
+                  Yesterday Salary Report
+                </button>
+              </li>
             </ul>
           </div>
 
           {/* Tab Content */}
-          {Object.keys(filteredUsersByLevel).length > 0 ? (
-            Object.keys(filteredUsersByLevel).map((level) => (
-              <div key={level} className="mb-6">
-                <h4 className="text-base font-semibold mb-2">
-                  <Link
-                    to={`/level-details/${level}`}
-                    className="text-blue-600 hover:underline"
-                  >
-                    Level {level}
-                  </Link>
-                </h4>
-                <div className="table-responsive scroll-sm">
-                  <table className="table bordered-table text-sm w-full">
-                    <thead>
-                      <tr>
-                        <th className="text-sm">User ID</th>
-                        <th className="text-sm">Recharge</th>
-                        <th className="text-sm">Withdraw</th>
-                        {activeTab === "total" && (
-                          <>
-                            <th className="text-sm">Number of Register</th>
-                            <th className="text-sm">Deposit Number</th>
-                            <th className="text-sm">Deposit Amount</th>
-                            <th className="text-sm">Number of People Making First Deposit</th>
-                          </>
-                        )}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredUsersByLevel[level].users.map((user) => (
-                        <tr key={user.userId}>
-                          <td>
-                            <button
-                              type="button"
-                              className="text-blue-600 hover:underline focus:outline-none"
-                              onClick={() => openProfileModal(user.userId)}
-                            >
-                              {user.userId}
-                            </button>
-                          </td>
-                          <td>{user.recharge}</td>
-                          <td>{user.withdraw}</td>
-                          {activeTab === "total" && (
-                            <>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                            </>
-                          )}
-                        </tr>
-                      ))}
-                      {activeTab === "total" && (
-                        <tr className="font-semibold">
-                          <td>Level Total</td>
-                          <td></td>
-                          <td></td>
-                          <td>{filteredUsersByLevel[level].summary.numberOfRegister}</td>
-                          <td>{filteredUsersByLevel[level].summary.depositNumber}</td>
-                          <td>{filteredUsersByLevel[level].summary.depositAmount}</td>
-                          <td>{filteredUsersByLevel[level].summary.firstDepositCount}</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="text-center py-4">
-              No users found for the selected report
-            </div>
-          )}
+          {activeTab === "today" && renderSubordinateReport()}
+          {activeTab === "total" && renderSubordinateReport()}
+          {activeTab === "yesterday" && renderSubordinateReport()}
+          {activeTab === "todaySalary" && renderSalaryReport(salaryReportToday)}
+          {activeTab === "yesterdaySalary" && renderSalaryReport(salaryReportYesterday)}
         </div>
 
         {/* User Profile Modal */}

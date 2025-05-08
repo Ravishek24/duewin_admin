@@ -1,6 +1,8 @@
 
 import { Icon } from '@iconify/react/dist/iconify.js';
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 // Sample data (replace with API data)
 const sampleBets = {
@@ -35,6 +37,8 @@ const PredictionManagement = () => {
   const [showResultModal, setShowResultModal] = useState(false);
   const [selectedResult, setSelectedResult] = useState('');
   const currentBets = sampleBets[activePeriod];
+  const navigate = useNavigate();
+
 
   // Timer effect
   useEffect(() => {
@@ -103,6 +107,13 @@ const PredictionManagement = () => {
         <h5 className="mb-0 text-primary-600 fw-semibold">Wingo Prediction</h5>
       </div>
       <div className="card-body p-4">
+  <button
+    className="btn btn-outline-primary mb-3"
+    onClick={() => navigate(-1)}
+  >
+    ← Back
+  </button>
+
         {/* Period Selector and Timer */}
         <div className="d-flex justify-content-between align-items-center mb-4">
           <select

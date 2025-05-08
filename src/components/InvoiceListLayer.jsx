@@ -10,9 +10,10 @@ const usersData = [
     balance: 5000,
     isActive: true,
     loginIp: '192.168.1.1',
+    registerIp: '192.168.1.10', // Added registerIp field
     totalDeposit: 10000,
     totalWithdrawal: 5000,
-    totalCommission: 1500, // Added commission field
+    totalCommission: 1500,
     isBlocked: false,
   },
   {
@@ -21,9 +22,10 @@ const usersData = [
     balance: 3000,
     isActive: false,
     loginIp: '192.168.1.2',
+    registerIp: '192.168.1.11', // Added registerIp field
     totalDeposit: 8000,
     totalWithdrawal: 4000,
-    totalCommission: 1200, // Added commission field
+    totalCommission: 1200,
     isBlocked: true,
   },
   {
@@ -32,9 +34,10 @@ const usersData = [
     balance: 2000,
     isActive: true,
     loginIp: '192.168.1.3',
+    registerIp: '192.168.1.12', // Added registerIp field
     totalDeposit: 6000,
     totalWithdrawal: 3000,
-    totalCommission: 800, // Added commission field
+    totalCommission: 800,
     isBlocked: false,
   },
 ];
@@ -182,7 +185,7 @@ const AllUsersLayer = () => {
       <div className="card-body">
         {/* Scrollable Table Wrapper */}
         <div className="table-responsive" style={{ overflowX: 'auto' }}>
-          <table className="table bordered-table mb-0" style={{ minWidth: '1100px' }}>
+          <table className="table bordered-table mb-0" style={{ minWidth: '1200px' }}>
             <thead>
               <tr>
                 <th scope="col">
@@ -202,6 +205,7 @@ const AllUsersLayer = () => {
                 <th scope="col">Balance</th>
                 <th scope="col">Status</th>
                 <th scope="col">Login IP</th>
+                <th scope="col">Register IP</th>
                 <th scope="col">Total Deposit</th>
                 <th scope="col">Total Withdrawal</th>
                 <th scope="col">Commission Detail</th>
@@ -249,6 +253,7 @@ const AllUsersLayer = () => {
                     ></span>
                   </td>
                   <td>{user.loginIp}</td>
+                  <td>{user.registerIp}</td>
                   <td>${user.totalDeposit.toLocaleString()}</td>
                   <td>${user.totalWithdrawal.toLocaleString()}</td>
                   <td>${user.totalCommission.toLocaleString()}</td>

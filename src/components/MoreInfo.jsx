@@ -6,9 +6,9 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 const sampleUserData = {
   userId: 'USR001',
   betHistory: [
-    { id: 'BET001', date: '2025-04-10', type: 'Sports', amount: 100, outcome: 'Win', status: 'Settled' },
-    { id: 'BET002', date: '2025-04-09', type: 'Casino', amount: 50, outcome: 'Loss', status: 'Settled' },
-    { id: 'BET003', date: '2025-04-08', type: 'Sports', amount: 200, outcome: 'Pending', status: 'Open' },
+    { id: 'BET001', date: '2025-04-10', type: 'Sports', gameName: 'Football Match', selectGame: 'Team A vs Team B', amount: 100, outcome: 'Win', status: 'Settled', balanceAfterBet: 5100 },
+    { id: 'BET002', date: '2025-04-09', type: 'Casino', gameName: 'Blackjack', selectGame: 'Table 5', amount: 50, outcome: 'Loss', status: 'Settled', balanceAfterBet: 4950 },
+    { id: 'BET003', date: '2025-04-08', type: 'Sports', gameName: 'Basketball Game', selectGame: 'Team X vs Team Y', amount: 200, outcome: 'Pending', status: 'Open', balanceAfterBet: 4750 },
   ],
   depositHistory: [
     { id: 'DEP001', date: '2025-04-10', amount: 1000, method: 'PayPal', status: 'Completed' },
@@ -32,14 +32,11 @@ const sampleUserData = {
     network: 'ERC20',
     lastUpdated: '2025-04-01',
   },
-  kycDetails: {
-    status: 'Verified',
-    fullName: 'John Doe',
-    documentType: 'Passport',
-    documentNumber: 'P12345678',
-    verificationDate: '2025-03-15',
-    address: '123 Main St, City, Country',
-  },
+  transactionHistory: [
+    { id: 'TRX001', date: '2025-04-10 14:30:00', type: 'Deposit', amount: 1000, method: 'PayPal', status: 'Completed' },
+    { id: 'TRX002', date: '2025-04-09 10:15:00', type: 'Withdrawal', amount: 200, method: 'PayPal', status: 'Processing' },
+    { id: 'TRX003', date: '2025-04-08 09:00:00', type: 'Bet', amount: 100, method: 'Sports', status: 'Settled' },
+  ],
 };
 
 const UserDetails = () => {
@@ -47,7 +44,7 @@ const UserDetails = () => {
   const [activeTab, setActiveTab] = useState('betHistory');
 
   // Simulate fetching user data (replace with API call)
-  const user = sampleUserData; // TODO: Fetch from API using userId
+  const user = sampleUserData; // TODO:👍 Fetch from API using userId
 
   return (
     <div className="card">
@@ -102,10 +99,10 @@ const UserDetails = () => {
           </li>
           <li className="nav-item">
             <button
-              className={`nav-link ${activeTab === 'kycDetails' ? 'active' : ''}`}
-              onClick={() => setActiveTab('kycDetails')}
+              className={`nav-link ${activeTab === 'transactionHistory' ? 'active' : ''}`}
+              onClick={() => setActiveTab('transactionHistory')}
             >
-              KYC Details
+              Transaction History
             </button>
           </li>
         </ul>
@@ -115,15 +112,18 @@ const UserDetails = () => {
           {/* Bet History */}
           {activeTab === 'betHistory' && (
             <div className="table-responsive" style={{ overflowX: 'auto' }}>
-              <table className="table bordered-table mb-0" style={{ minWidth: '800px' }}>
+              <table className="table bordered-table mb-0" style={{ minWidth: '1000px' }}>
                 <thead>
                   <tr>
                     <th>Bet ID</th>
                     <th>Date</th>
                     <th>Type</th>
+                    <th>Game Name</th>
+                    <th>Select Game</th>
                     <th>Amount</th>
                     <th>Outcome</th>
                     <th>Status</th>
+                    <th>Balance After Bet</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -133,6 +133,8 @@ const UserDetails = () => {
                         <td>{bet.id}</td>
                         <td>{bet.date}</td>
                         <td>{bet.type}</td>
+                        <td>{bet.gameName}</td>
+                        <td>{bet.selectGame}</td>
                         <td>${bet.amount.toLocaleString()}</td>
                         <td>
                           <span
@@ -148,11 +150,12 @@ const UserDetails = () => {
                           </span>
                         </td>
                         <td>{bet.status}</td>
+                        <td>${bet.balanceAfterBet.toLocaleString()}</td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="6" className="text-center">
+                      <td colSpan="9" className="text-center">
                         No bet history available
                       </td>
                     </tr>
@@ -290,34 +293,53 @@ const UserDetails = () => {
             </div>
           )}
 
-          {/* KYC Details */}
-          {activeTab === 'kycDetails' && (
-            <div className="p-3 bg-base rounded">
-              <h6 className="mb-3">KYC Details</h6>
-              <dl className="row mb-0">
-                <dt className="col-sm-4">Status</dt>
-                <dd className="col-sm-8">
-                  <span
-                    className={`px-2 py-1 rounded-pill text-sm ${
-                      user.kycDetails.status === 'Verified'
-                        ? 'bg-success-focus text-success-main'
-                        : 'bg-warning-focus text-warning-main'
-                    }`}
-                  >
-                    {user.kycDetails.status || 'N/A'}
-                  </span>
-                </dd>
-                <dt className="col-sm-4">Full Name</dt>
-                <dd className="col-sm-8">{user.kycDetails.fullName || 'N/A'}</dd>
-                <dt className="col-sm-4">Document Type</dt>
-                <dd className="col-sm-8">{user.kycDetails.documentType || 'N/A'}</dd>
-                <dt className="col-sm-4">Document Number</dt>
-                <dd className="col-sm-8">{user.kycDetails.documentNumber || 'N/A'}</dd>
-                <dt className="col-sm-4">Verification Date</dt>
-                <dd className="col-sm-8">{user.kycDetails.verificationDate || 'N/A'}</dd>
-                <dt className="col-sm-4">Address</dt>
-                <dd className="col-sm-8">{user.kycDetails.address || 'N/A'}</dd>
-              </dl>
+          {/* Transaction History */}
+          {activeTab === 'transactionHistory' && (
+            <div className="table-responsive" style={{ overflowX: 'auto' }}>
+              <table className="table bordered-table mb-0" style={{ minWidth: '800px' }}>
+                <thead>
+                  <tr>
+                    <th>Transaction ID</th>
+                    <th>Date & Time</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {user.transactionHistory.length > 0 ? (
+                    user.transactionHistory.map((transaction) => (
+                      <tr key={transaction.id}>
+                        <td>{transaction.id}</td>
+                        <td>{transaction.date}</td>
+                        <td>{transaction.type}</td>
+                        <td>${transaction.amount.toLocaleString()}</td>
+                        <td>{transaction.method}</td>
+                        <td>
+                          <span
+                            className={`px-2 py-1 rounded-pill text-sm ${
+                              transaction.status === 'Completed'
+                                ? 'bg-success-focus text-success-main'
+                                : transaction.status === 'Processing'
+                                ? 'bg-warning-focus text-warning-main'
+                                : 'bg-danger-focus text-danger-main'
+                            }`}
+                          >
+                            {transaction.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="text-center">
+                        No transaction history available
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           )}
         </div>

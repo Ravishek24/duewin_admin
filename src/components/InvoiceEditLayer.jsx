@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { useNavigate } from "react-router-dom";
+
 
 // Mock data for demonstration (replace with API data in production)
 const pendingRecharges = [
@@ -46,6 +48,8 @@ const RechargeManagement = () => {
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [rejectReason, setRejectReason] = useState("");
+  const navigate = useNavigate();
+
 
   // Handle Success action
   const handleSuccess = (orderId) => {
@@ -99,9 +103,17 @@ const RechargeManagement = () => {
 
   return (
     <div className="card relative">
-      <div className="card-header">
-        <h2 className="text-xl font-semibold">Recharge Management</h2>
-      </div>
+      <div className="card-header flex justify-between items-center">
+  <h2 className="text-xl font-semibold">Recharge Management</h2>
+  <button
+    onClick={() => navigate(-1)}
+    className="btn btn-sm btn-outline-primary flex items-center gap-1"
+  >
+    <Icon icon="ic:round-arrow-back" className="text-lg" />
+    Back
+  </button>
+</div>
+
       <div className={`card-body py-8 ${isRejectModalOpen ? 'opacity-50' : ''}`}>
         {/* Pending Recharge Section */}
         <div className="mb-12">

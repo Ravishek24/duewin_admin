@@ -4,9 +4,10 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import ThemeToggleButton from "../helper/ThemeToggleButton";
 
 const MasterLayout = ({ children }) => {
-  let [sidebarActive, seSidebarActive] = useState(false);
-  let [mobileMenu, setMobileMenu] = useState(false);
-  const location = useLocation(); // Hook to get the current route
+  const [sidebarActive, setSidebarActive] = useState(false);
+  const [mobileMenu, setMobileMenu] = useState(false);
+  const location = useLocation();
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
 
   useEffect(() => {
     const handleDropdownClick = (event) => {
@@ -24,7 +25,7 @@ const MasterLayout = ({ children }) => {
         dropdown.classList.remove("open");
         const submenu = dropdown.querySelector(".sidebar-submenu");
         if (submenu) {
-          submenu.style.maxHeight = "0px"; // Collapse submenu
+          submenu.style.maxHeight = "0px";
         }
       });
 
@@ -33,7 +34,7 @@ const MasterLayout = ({ children }) => {
         clickedDropdown.classList.add("open");
         const submenu = clickedDropdown.querySelector(".sidebar-submenu");
         if (submenu) {
-          submenu.style.maxHeight = `${submenu.scrollHeight}px`; // Expand submenu
+          submenu.style.maxHeight = `${submenu.scrollHeight}px`;
         }
       }
     };
@@ -59,7 +60,7 @@ const MasterLayout = ({ children }) => {
             dropdown.classList.add("open");
             const submenu = dropdown.querySelector(".sidebar-submenu");
             if (submenu) {
-              submenu.style.maxHeight = `${submenu.scrollHeight}px`; // Expand submenu
+              submenu.style.maxHeight = `${submenu.scrollHeight}px`;
             }
           }
         });
@@ -77,21 +78,24 @@ const MasterLayout = ({ children }) => {
     };
   }, [location.pathname]);
 
-  let sidebarControl = () => {
-    seSidebarActive(!sidebarActive);
+  const sidebarControl = () => {
+    setSidebarActive(!sidebarActive);
   };
 
-  let mobileMenuControl = () => {
+  const mobileMenuControl = () => {
     setMobileMenu(!mobileMenu);
   };
 
+  const handleDashboardClick = (e) => {
+    e.preventDefault(); // Prevent default link behavior
+    setIsDashboardOpen(!isDashboardOpen); // Toggle submenu visibility
+  };
   return (
-    <section className={mobileMenu ? "overlay active" : "overlay "}>
-      {/* sidebar */}
+    <section className={mobileMenu ? "overlay active" : "overlay"}>
       <aside
         className={
           sidebarActive
-            ? "sidebar active "
+            ? "sidebar active"
             : mobileMenu
             ? "sidebar sidebar-open"
             : "sidebar"
@@ -107,7 +111,7 @@ const MasterLayout = ({ children }) => {
         <div>
           <Link to="/" className="sidebar-logo">
             <img
-              src="assets/images/logo.png"
+              src="https://ossimg.diuacting.com/DiuWin/other/h5setting_20240724134835hng9.png"
               alt="site logo"
               className="light-logo"
             />
@@ -125,174 +129,174 @@ const MasterLayout = ({ children }) => {
         </div>
         <div className="sidebar-menu-area">
           <ul className="sidebar-menu" id="sidebar-menu">
-            <li className="dropdown">
-              <Link to="#">
-                <Icon
-                  icon="solar:home-smile-angle-outline"
-                  className="menu-icon"
-                />
-                <span>Dashboard</span>
-              </Link>
-              <ul className="sidebar-submenu">
-                <li>
-                  <NavLink
-                    to="/"
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className="ri-circle-fill circle-icon text-primary-600 w-auto" />
-                    AI
-                  </NavLink>
-                </li>
-              </ul>
-            </li>
+          <li>
+  <NavLink
+    to="/"
+    className={(navData) => (navData.isActive ? "active-page" : "")}
+  >
+    <Icon
+      icon="solar:home-smile-angle-outline"
+      className="menu-icon"
+    />
+    <span>Dashboard</span>
+  </NavLink>
+</li>
 
             <li className="sidebar-menu-group-title">Application</li>
 
-            {/* Invoice Dropdown */}
-            <li className="dropdown">
-              <Link to="#">
+            <li>
+              <NavLink
+                to="/invoice-list"
+                className={(navData) =>
+                  navData.isActive ? "active-page" : ""
+                }
+              >
                 <Icon icon="hugeicons:invoice-03" className="menu-icon" />
-                <span>User</span>
-              </Link>
-              <ul className="sidebar-submenu">
-                <li>
-                  <NavLink
-                    to="/invoice-list"
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className="ri-circle-fill circle-icon text-primary-600 w-auto" />{" "}
-                    List
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/invoice-preview"
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className="ri-circle-fill circle-icon text-warning-main w-auto" />
-                    Gift
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/invoice-add"
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className="ri-circle-fill circle-icon text-info-main w-auto" />{" "}
-                    Wingo Game
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/invoice-edit"
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className="ri-circle-fill circle-icon text-danger-main w-auto" />{" "}
-                    Recharge Management
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/user-report"
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className="ri-circle-fill circle-icon text-danger-main w-auto" />{" "}
-                    User Report
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/activity-page-edit"
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className="ri-circle-fill circle-icon text-danger-main w-auto" />{" "}
-                    Activity Page edit
-                  </NavLink>
-                </li>
-              </ul>
+                <span>User List</span>
+              </NavLink>
             </li>
-            <li className="dropdown">
-              <Link to="#">
+            <li>
+              <NavLink
+                to="/invoice-preview"
+                className={(navData) =>
+                  navData.isActive ? "active-page" : ""
+                }
+              >
                 <Icon icon="hugeicons:invoice-03" className="menu-icon" />
-                <span>Withdrawal Management</span>
-              </Link>
-              <ul className="sidebar-submenu">
-                <li>
-                  <NavLink
-                    to="/new-withdraw"
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className="ri-circle-fill circle-icon text-primary-600 w-auto" />{" "}
-                    New withdraw
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/submitted-withdraw"
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className="ri-circle-fill circle-icon text-warning-main w-auto" />
-                    Submited withdraw
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/success-withdraw"
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className="ri-circle-fill circle-icon text-info-main w-auto" />{" "}
-                    Success Withdraw
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/failed-withdraw"
-                    className={(navData) =>
-                      navData.isActive ? "active-page" : ""
-                    }
-                  >
-                    <i className="ri-circle-fill circle-icon text-danger-main w-auto" />{" "}
-                    Failed Withdraw
-                  </NavLink>
-                </li>
-              </ul>
+                <span>Gift</span>
+              </NavLink>
             </li>
-            <Link to="/chat-message">
-              <span>Online Chat</span>
-            </Link>
-            <Link
-              className="dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3"
-              to="/company"
-            >
-              <Icon
-                icon="icon-park-outline:setting-two"
-                className="icon text-xl"
-              />
-              Setting
-            </Link>
-            <Link to="/payment-gateway">
-              <span>Payment Gateway</span>
-            </Link>
+            <li>
+              <NavLink
+                to="/invoice-add"
+                className={(navData) =>
+                  navData.isActive ? "active-page" : ""
+                }
+              >
+                <Icon icon="hugeicons:invoice-03" className="menu-icon" />
+                <span>Wingo Game</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/invoice-edit"
+                className={(navData) =>
+                  navData.isActive ? "active-page" : ""
+                }
+              >
+                <Icon icon="hugeicons:invoice-03" className="menu-icon" />
+                <span>Recharge Management</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/user-report"
+                className={(navData) =>
+                  navData.isActive ? "active-page" : ""
+                }
+              >
+                <Icon icon="hugeicons:invoice-03" className="menu-icon" />
+                <span>User Report</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/activity-page-edit"
+                className={(navData) =>
+                  navData.isActive ? "active-page" : ""
+                }
+              >
+                <Icon icon="hugeicons:invoice-03" className="menu-icon" />
+                <span>Activity Page Edit</span>
+              </NavLink>
+            </li>
+            <li>
+            <div className="menu-heading" style={{ marginTop: '16px' }}>
+    <span className="fw-bold">Withdraw Management</span>
+</div>
+  <ul>
+    <li>
+      <NavLink
+        to="/new-withdraw"
+        className={(navData) =>
+          navData.isActive ? "active-page" : ""
+        }
+      >
+        <Icon icon="hugeicons:invoice-03" className="menu-icon" />
+        <span>New Withdraw</span>
+      </NavLink>
+    </li>
+    <li>
+      <NavLink
+        to="/submitted-withdraw"
+        className={(navData) =>
+          navData.isActive ? "active-page" : ""
+        }
+      >
+        <Icon icon="hugeicons:invoice-03" className="menu-icon" />
+        <span>Submitted Withdraw</span>
+      </NavLink>
+    </li>
+    <li>
+      <NavLink
+        to="/success-withdraw"
+        className={(navData) =>
+          navData.isActive ? "active-page" : ""
+        }
+      >
+        <Icon icon="hugeicons:invoice-03" className="menu-icon" />
+        <span>Success Withdraw</span>
+      </NavLink>
+    </li>
+    <li>
+      <NavLink
+        to="/failed-withdraw"
+        className={(navData) =>
+          navData.isActive ? "active-page" : ""
+        }
+      >
+        <Icon icon="hugeicons:invoice-03" className="menu-icon" />
+        <span>Failed Withdraw</span>
+      </NavLink>
+    </li>
+  </ul>
+</li>
+            <li>
+              <NavLink
+                to="/chat-message"
+                className={(navData) =>
+                  navData.isActive ? "active-page" : ""
+                }
+              >
+                <Icon icon="hugeicons:invoice-03" className="menu-icon" />
+                <span>Online Chat</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/company"
+                className={(navData) =>
+                  navData.isActive ? "active-page" : ""
+                }
+              >
+                <Icon
+                  icon="icon-park-outline:setting-two"
+                  className="menu-icon"
+                />
+                <span>Setting</span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/payment-gateway"
+                className={(navData) =>
+                  navData.isActive ? "active-page" : ""
+                }
+              >
+                <Icon icon="hugeicons:invoice-03" className="menu-icon" />
+                <span>Payment Gateway</span>
+              </NavLink>
+            </li>
           </ul>
         </div>
       </aside>
@@ -317,7 +321,7 @@ const MasterLayout = ({ children }) => {
                   ) : (
                     <Icon
                       icon="heroicons:bars-3-solid"
-                      className="icon text-2xl non-active "
+                      className="icon text-2xl non-active"
                     />
                   )}
                 </button>
@@ -336,7 +340,6 @@ const MasterLayout = ({ children }) => {
             </div>
             <div className="col-auto">
               <div className="d-flex flex-wrap align-items-center gap-3">
-                {/* ThemeToggleButton */}
                 <ThemeToggleButton />
                 <div className="dropdown d-none d-sm-inline-block">
                   <button
@@ -546,7 +549,6 @@ const MasterLayout = ({ children }) => {
                     </div>
                   </div>
                 </div>
-                {/* Language dropdown end */}
                 <div className="dropdown">
                   <button
                     className="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center"
@@ -610,7 +612,7 @@ const MasterLayout = ({ children }) => {
                               src="assets/images/notification/profile-4.png"
                               alt=""
                             />
-                            <span className="w-8-px h-8-px  bg-neutral-300 rounded-circle position-absolute end-0 bottom-0" />
+                            <span className="w-8-px h-8-px bg-neutral-300 rounded-circle position-absolute end-0 bottom-0" />
                           </span>
                           <div>
                             <h6 className="text-md fw-semibold mb-4">
@@ -731,7 +733,6 @@ const MasterLayout = ({ children }) => {
                     </div>
                   </div>
                 </div>
-                {/* Message dropdown end */}
                 <div className="dropdown">
                   <button
                     className="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center"
@@ -881,7 +882,6 @@ const MasterLayout = ({ children }) => {
                     </div>
                   </div>
                 </div>
-                {/* Notification dropdown end */}
                 <div className="dropdown">
                   <button
                     className="d-flex justify-content-center align-items-center rounded-circle"
@@ -920,7 +920,7 @@ const MasterLayout = ({ children }) => {
                           <Icon
                             icon="solar:user-linear"
                             className="icon text-xl"
-                          />{" "}
+                          />
                           My Profile
                         </Link>
                       </li>
@@ -932,7 +932,7 @@ const MasterLayout = ({ children }) => {
                           <Icon
                             icon="tabler:message-check"
                             className="icon text-xl"
-                          />{" "}
+                          />
                           Inbox
                         </Link>
                       </li>
@@ -953,23 +953,20 @@ const MasterLayout = ({ children }) => {
                           className="dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3"
                           to="#"
                         >
-                          <Icon icon="lucide:power" className="icon text-xl" />{" "}
+                          <Icon icon="lucide:power" className="icon text-xl" />
                           Log Out
                         </Link>
                       </li>
                     </ul>
                   </div>
                 </div>
-                {/* Profile dropdown end */}
               </div>
             </div>
           </div>
         </div>
 
-        {/* dashboard-main-body */}
         <div className="dashboard-main-body">{children}</div>
 
-        {/* Footer section */}
         <footer className="d-footer">
           <div className="row align-items-center justify-content-between">
             <div className="col-auto">

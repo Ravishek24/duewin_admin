@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react/dist/iconify.js";
 
 // Mock data for demonstration
@@ -50,6 +50,7 @@ const NewWithdraw = () => {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [selectedGateway, setSelectedGateway] = useState("");
   const [rejectRemark, setRejectRemark] = useState("");
+  const navigate = useNavigate();
 
   // Mount modal container to body
   useEffect(() => {
@@ -118,6 +119,10 @@ const NewWithdraw = () => {
     setRejectRemark("");
   };
 
+  const handleBackClick = () => {
+    navigate(-1); // Navigate to the previous page
+  };
+
   return (
     <>
       <style>
@@ -144,8 +149,15 @@ const NewWithdraw = () => {
         `}
       </style>
       <div className="card">
-        <div className="card-header">
+        <div className="card-header d-flex align-items-center justify-content-between">
           <h2 className="text-xl font-semibold">New Withdraw Requests</h2>
+          <button
+            className="btn btn-sm btn-primary-600 d-flex align-items-center gap-1"
+            onClick={handleBackClick}
+          >
+            <Icon icon="ep:arrow-left" className="text-sm" />
+            Back
+          </button>
         </div>
         <div className="card-body py-8">
           <div className="table-responsive scroll-sm">

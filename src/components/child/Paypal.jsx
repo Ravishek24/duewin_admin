@@ -4,6 +4,8 @@ const Paypal = () => {
     const [isEnabled, setIsEnabled] = useState(true);
     const [showPopup, setShowPopup] = useState(false);
     const [popupText, setPopupText] = useState('');
+    const [payInEnabled, setPayInEnabled] = useState(true);
+    const [payOutEnabled, setPayOutEnabled] = useState(true);
 
     const handleToggle = () => {
         const newValue = !isEnabled;
@@ -12,6 +14,14 @@ const Paypal = () => {
         setShowPopup(true);
         setTimeout(() => setShowPopup(false), 2000);
     };
+    const handlePayInToggle = () => {
+        setPayInEnabled(!payInEnabled);
+    };
+
+    const handlePayOutToggle = () => {
+        setPayOutEnabled(!payOutEnabled);
+    };
+
 
     return (
         <div className="col-xxl-6 position-relative">
@@ -59,38 +69,58 @@ const Paypal = () => {
 
                         {/* Pay In Section */}
                         <div className="col-sm-6">
-                            <label className="form-label fw-semibold text-primary-light text-md mb-8">
-                                Pay In Amount (Min - Max)
-                            </label>
+                            <div className="d-flex align-items-center gap-2 mb-8">
+                                <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    checked={payInEnabled}
+                                    onChange={handlePayInToggle}
+                                />
+                                <label className="form-label fw-semibold text-primary-light text-md mb-0">
+                                    Pay In Amount (Min - Max)
+                                </label>
+                            </div>
                             <div className="d-flex gap-3">
                                 <input
                                     type="number"
                                     className="form-control radius-8"
                                     placeholder="Min"
+                                    disabled={!payInEnabled}
                                 />
                                 <input
                                     type="number"
                                     className="form-control radius-8"
                                     placeholder="Max"
+                                    disabled={!payInEnabled}
                                 />
                             </div>
                         </div>
 
                         {/* Pay Out Section */}
                         <div className="col-sm-6">
-                            <label className="form-label fw-semibold text-primary-light text-md mb-8">
-                                Pay Out Amount (Min - Max)
-                            </label>
+                            <div className="d-flex align-items-center gap-2 mb-8">
+                                <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    checked={payOutEnabled}
+                                    onChange={handlePayOutToggle}
+                                />
+                                <label className="form-label fw-semibold text-primary-light text-md mb-0">
+                                    Pay Out Amount (Min - Max)
+                                </label>
+                            </div>
                             <div className="d-flex gap-3">
                                 <input
                                     type="number"
                                     className="form-control radius-8"
                                     placeholder="Min"
+                                    disabled={!payOutEnabled}
                                 />
                                 <input
                                     type="number"
                                     className="form-control radius-8"
                                     placeholder="Max"
+                                    disabled={!payOutEnabled}
                                 />
                             </div>
                         </div>
