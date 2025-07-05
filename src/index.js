@@ -7,7 +7,8 @@ import 'react-modal-video/css/modal-video.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-
+import '../public/assets/css/style.css';
+import '../public/assets/css/extra.css';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
